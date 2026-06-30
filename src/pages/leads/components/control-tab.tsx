@@ -1,0 +1,231 @@
+import { appSetting } from "@/constants/app-setting/config.const";
+import { Row, Col, Select, Input, ConfigProvider, Typography, Form, Divider } from "antd";
+import type { FormInstance } from "antd";
+import { useEffect } from "react";
+
+type ControlFormValues = {
+    consultor?: string;
+    idCRM?: string;
+    idCORP?: string;
+    credit?: string;
+    team?: string;
+    input_crm?: boolean;
+    availability_crm?: string;
+    debt_with_operator?: string;
+    contract?: string;
+    biometrics?: string;
+};
+
+export function OrderControlTab({
+    viewingEntity,
+    updateMutation,
+    form,
+}: {
+    viewingEntity: any;
+    updateMutation: { mutate: (variables: { id: number; payload: Record<string, unknown> }) => void };
+    form: FormInstance<ControlFormValues>;
+}) {
+
+    useEffect(() => {
+        if (!viewingEntity) return;
+        form.setFieldsValue({
+            consultor: viewingEntity.responsible_consultant || "",
+            idCRM: viewingEntity.crm_id != null ? String(viewingEntity.crm_id) : "",
+            idCORP: viewingEntity.corporate_id || "",
+            credit: viewingEntity.credit ?? undefined,
+            team: viewingEntity.team ?? undefined,
+            input_crm: viewingEntity.input_crm ?? undefined,
+            availability_crm: viewingEntity.availability_crm ?? undefined,
+            debt_with_operator: viewingEntity.debt_with_operator ?? undefined,
+            contract: viewingEntity.contract ?? undefined,
+            biometrics: viewingEntity.biometrics ?? undefined,
+        });
+    }, [form, viewingEntity]);
+
+    const handleFinish = (values: ControlFormValues) => {
+        updateMutation.mutate({
+            id: viewingEntity.id,
+            payload: {
+                responsible_consultant: values.consultor,
+                corporate_id: values.idCORP,
+                crm_id: values.idCRM,
+                team: values.team,
+                input_crm: values.input_crm,
+                availability_crm: values.availability_crm,
+                credit: values.credit,
+                debt_with_operator: values.debt_with_operator,
+                contract: values.contract,
+                biometrics: values.biometrics,
+            },
+        });
+    };
+
+    const color = appSetting.primaryColor;
+    return (
+        <Form form={form} onFinish={handleFinish}>
+            <div className="max-h-90 overflow-y-auto scrollbar-thin flex flex-col gap-4 ">
+                <ConfigProvider
+                    theme={{
+                        components: {
+                            Select: { hoverBorderColor: color, activeBorderColor: color, activeOutlineColor: "none" },
+                            Input: { hoverBorderColor: color, activeBorderColor: color },
+                        },
+                    }}
+                > <Divider style={{ fontSize: 13, color: "#666" }}>Informações Gerais</Divider>
+                    <div className="bg-neutral-100 rounded-sm p-3 w-full">
+                        <Row gutter={[16, 16]}>
+                            <Col span={7}>
+                                <span className="flex flex-col gap-1">
+                                    <Typography.Text type="secondary">Consultor</Typography.Text>
+                                    <Form.Item name="consultor" noStyle>
+                                        <Input size="small" style={{ width: 220 }} />
+
+                                    </Form.Item>
+                                </span>
+                            </Col>
+                            <Col span={6}>
+                                <span className="flex flex-col gap-1">
+                                    <Typography.Text type="secondary">ID CORP</Typography.Text>
+                                    <Form.Item name="idCORP" noStyle>
+                                        <Input size="small" style={{ width: 160 }} maxLength={8} />
+                                    </Form.Item>
+                                </span>
+                            </Col>
+                            <Col span={6}>
+                                <span className="flex flex-col gap-1">
+                                    <Typography.Text type="secondary">Equipe</Typography.Text>
+                                    <Form.Item name="team" noStyle>
+                                        <Select showSearch size="small" style={{ width: 200 }} options={[]} />
+                                    </Form.Item>
+                                </span>
+                            </Col>
+                        </Row>
+                    </div>
+                    <Divider style={{ fontSize: 13, color: "#666" }}>CRM</Divider>
+                    <div className="bg-neutral-100 rounded-sm p-3 w-full">
+                        <Row gutter={[16, 16]}>
+                            <Col span={6}>
+                                <span className="flex flex-col gap-1">
+                                    <Typography.Text type="secondary">ID CRM</Typography.Text>
+                                    <Form.Item name="idCRM" noStyle>
+                                        <Input size="small" style={{ width: 160 }} maxLength={8} />
+                                    </Form.Item>
+                                </span>
+                            </Col>
+                            <Col span={6}>
+                                <span className="flex flex-col gap-1">
+                                    <Typography.Text type="secondary">Input CRM</Typography.Text>
+                                    <Form.Item name="input_crm" noStyle>
+                                        <Select
+                                            size="small"
+                                            style={{ width: 160 }}
+                                            options={[
+                                                { value: true, label: "Sim" },
+                                                { value: false, label: "Não" },
+                                            ]}
+                                        />
+                                    </Form.Item>
+                                </span>
+                            </Col>
+
+                            <Col span={6}>
+                                <span className="flex flex-col gap-1">
+                                    <Typography.Text type="secondary">Disponibilidade CRM</Typography.Text>
+                                    <Form.Item name="availability_crm" noStyle>
+                                        <Select
+                                            size="small"
+                                            style={{ width: 160 }}
+                                            options={[
+                                                { value: "sim", label: "Sim" },
+                                                { value: "não", label: "Não" },
+                                                { value: "sem análise", label: "Sem análise" },
+                                            ]}
+                                        />
+                                    </Form.Item>
+                                </span>
+                            </Col>
+                        </Row>
+                    </div>
+                    <Divider style={{ fontSize: 13, color: "#666" }}>Formalização e Análise</Divider>
+                    <div className="bg-neutral-100 rounded-sm p-3 w-full">
+                        <Row gutter={[16, 16]}>
+                            <Col span={6}>
+                                <span className="flex flex-col gap-1">
+                                    <Typography.Text type="secondary">Crédito</Typography.Text>
+
+                                    <Form.Item name="credit" noStyle>
+                                        <Select
+                                            size="small"
+                                            style={{ width: 180 }}
+                                            options={[
+                                                { value: "positivo", label: "Positivo" },
+                                                { value: "negativo", label: "Negativo" },
+                                                { value: "sem análise", label: "Sem análise" },
+                                            ]}
+                                        />
+                                    </Form.Item>
+                                </span>
+                            </Col>
+                            <Col span={6}>
+                                <span className="flex flex-col gap-1">
+                                    <Typography.Text type="secondary">Débito Operadora</Typography.Text>
+
+                                    <Form.Item name="debt_with_operator" noStyle>
+                                        <Select
+                                            size="small"
+                                            style={{ width: 160 }}
+                                            options={[
+                                                { value: "sim", label: "Sim" },
+                                                { value: "não", label: "Não" },
+                                                { value: "sem análise", label: "Sem análise" },
+                                            ]}
+                                        />
+                                    </Form.Item>
+                                </span>
+                            </Col>
+                            <Col span={6}>
+
+                                <span className="flex flex-col gap-1">
+                                    <Typography.Text type="secondary">Contrato</Typography.Text>
+
+                                    <Form.Item name="contract" noStyle>
+                                        <Select
+                                            size="small"
+                                            style={{ width: 160 }}
+                                            options={[
+                                                { value: "não enviado", label: "Não enviado" },
+                                                { value: "aguardando", label: "Aguardando" },
+                                                { value: "assinado", label: "Assinado" },
+                                                { value: "cancelado", label: "Cancelado" },
+                                            ]}
+                                        />
+                                    </Form.Item>
+                                </span>
+                            </Col>
+
+                            <Col span={6}>
+                                <span className="flex flex-col gap-1">
+                                    <Typography.Text type="secondary">Biometria</Typography.Text>
+
+                                    <Form.Item name="biometrics" noStyle>
+                                        <Select
+                                            size="small"
+                                            style={{ width: 160 }}
+                                            options={[
+                                                { value: "não enviada", label: "Não enviada" },
+                                                { value: "aguardando", label: "Aguardando" },
+                                                { value: "realizado", label: "Realizado" },
+                                                { value: "cancelado", label: "Cancelado" },
+                                            ]}
+                                        />
+                                    </Form.Item>
+                                </span>
+                            </Col>
+
+                        </Row>
+                    </div>
+                </ConfigProvider>
+            </div>
+        </Form>
+    );
+}
