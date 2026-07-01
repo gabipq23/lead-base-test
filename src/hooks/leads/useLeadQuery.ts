@@ -13,24 +13,56 @@ export function useLeadQuery({
   enabled = true,
   page = 1,
   per_page = 100,
+  region,
+  uf,
+  city,
+  provider,
+  date_from,
+  date_to,
 }: {
   model?: LeadModule;
   enabled?: boolean;
   page?: number;
   per_page?: number;
+  region?: string;
+  uf?: string;
+  city?: string;
+  provider?: string;
+  date_from?: string;
+  date_to?: string;
 } = {}) {
   const { resolvedModule } = useResolvedOrderScope(model);
-  const queryParams: LeadQueryParams = { page, per_page };
+  const queryParams: LeadQueryParams = {
+    page,
+    per_page,
+    region,
+    uf,
+    city,
+    provider,
+    date_from,
+    date_to,
+  };
 
   return useQuery<ILeadsResponse>({
-    queryKey: ["leads", resolvedModule, page, per_page],
+    queryKey: [
+      "leads",
+      resolvedModule,
+      page,
+      per_page,
+      region,
+      uf,
+      city,
+      provider,
+      date_from,
+      date_to,
+    ],
     queryFn: async () => {
       const data = await LeadsService.getAll(
         resolvedModule,
         undefined,
         queryParams,
       );
-      console.log("[useLeadQuery] response", data);
+
       return data;
     },
     retry: 2,

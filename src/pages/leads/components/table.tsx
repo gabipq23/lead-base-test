@@ -58,6 +58,19 @@ interface LeadsTableProps {
     onRefresh: () => void;
     showReservationInfo?: boolean;
     lastUpdatedAt?: Date | null;
+    region?: string;
+    uf?: string;
+    city?: string;
+    provider?: string;
+    dateFrom?: string;
+    dateTo?: string;
+
+    onRegionChange: (value?: string) => void;
+    onUfChange: (value?: string) => void;
+    onCityChange: (value?: string) => void;
+    onProviderChange: (value?: string) => void;
+    onDateFromChange: (value?: string) => void;
+    onDateToChange: (value?: string) => void;
 }
 
 export function TableMain({
@@ -73,6 +86,18 @@ export function TableMain({
     onRefresh,
     showReservationInfo = false,
     lastUpdatedAt,
+    region,
+    uf,
+    city,
+    provider,
+    dateFrom,
+    dateTo,
+    onRegionChange,
+    onUfChange,
+    onCityChange,
+    onProviderChange,
+    onDateFromChange,
+    onDateToChange,
 }: LeadsTableProps) {
     const { styles } = useStyle();
 
@@ -253,6 +278,19 @@ export function TableMain({
                 }}
                 lastUpdatedAt={lastUpdatedAt}
                 showActions={true}
+                region={region}
+                uf={uf}
+                city={city}
+                provider={provider}
+                dateFrom={dateFrom}
+                dateTo={dateTo}
+
+                onRegionChange={onRegionChange}
+                onUfChange={onUfChange}
+                onCityChange={onCityChange}
+                onProviderChange={onProviderChange}
+                onDateFromChange={onDateFromChange}
+                onDateToChange={onDateToChange}
             />
 
             <div

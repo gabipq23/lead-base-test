@@ -13,6 +13,12 @@ export function ReservedLeadsPage() {
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(100);
     const [search, setSearch] = useState("");
+    const [region, setRegion] = useState<string | undefined>(undefined);
+    const [uf, setUf] = useState<string | undefined>(undefined);
+    const [city, setCity] = useState<string | undefined>(undefined);
+    const [provider, setProvider] = useState<string | undefined>(undefined);
+    const [dateFrom, setDateFrom] = useState<string | undefined>(undefined);
+    const [dateTo, setDateTo] = useState<string | undefined>(undefined);
 
     const { isGlobalAdmin } = useAuth();
     const { selectedSegmentId, selectedCompanyId, selectedPartnerId } = useAdminScope();
@@ -36,6 +42,12 @@ export function ReservedLeadsPage() {
         operatorSlug,
         page,
         per_page: pageSize,
+        region,
+        uf,
+        city,
+        provider,
+        date_from: dateFrom,
+        date_to: dateTo,
         enabled: isAdmin ? !!selectedSegmentId && !!selectedCompanyId && !!selectedPartnerId : true,
     });
 
@@ -75,6 +87,42 @@ export function ReservedLeadsPage() {
                             setPage(1);
                         }}
                         onRefresh={() => refetch()}
+                        region={region}
+                        uf={uf}
+                        city={city}
+                        provider={provider}
+                        dateFrom={dateFrom}
+                        dateTo={dateTo}
+
+                        onRegionChange={(value) => {
+                            setRegion(value);
+                            setPage(1);
+                        }}
+
+                        onUfChange={(value) => {
+                            setUf(value);
+                            setPage(1);
+                        }}
+
+                        onCityChange={(value) => {
+                            setCity(value);
+                            setPage(1);
+                        }}
+
+                        onProviderChange={(value) => {
+                            setProvider(value);
+                            setPage(1);
+                        }}
+
+                        onDateFromChange={(value) => {
+                            setDateFrom(value);
+                            setPage(1);
+                        }}
+
+                        onDateToChange={(value) => {
+                            setDateTo(value);
+                            setPage(1);
+                        }}
                     />
                 </div>
             )}

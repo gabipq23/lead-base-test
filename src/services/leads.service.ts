@@ -8,6 +8,12 @@ export interface LeadQueryParams {
   per_page?: number;
   company_id?: number;
   partner_id?: number;
+  region?: string;
+  uf?: string;
+  city?: string;
+  provider?: string;
+  date_from?: string;
+  date_to?: string;
 }
 
 export interface LeadReserveManyPayload {

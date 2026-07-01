@@ -56,7 +56,19 @@ interface LeadsTableProps {
     searchText: string;
     onSearchChange: (value: string) => void;
     onRefresh: () => void;
+    region?: string;
+    uf?: string;
+    city?: string;
+    provider?: string;
+    dateFrom?: string;
+    dateTo?: string;
 
+    onRegionChange: (value?: string) => void;
+    onUfChange: (value?: string) => void;
+    onCityChange: (value?: string) => void;
+    onProviderChange: (value?: string) => void;
+    onDateFromChange: (value?: string) => void;
+    onDateToChange: (value?: string) => void;
 }
 
 export function TableReservedLeads({
@@ -70,7 +82,18 @@ export function TableReservedLeads({
     searchText,
     onSearchChange,
     onRefresh,
-
+    region,
+    uf,
+    city,
+    provider,
+    dateFrom,
+    dateTo,
+    onRegionChange,
+    onUfChange,
+    onCityChange,
+    onProviderChange,
+    onDateFromChange,
+    onDateToChange,
 }: LeadsTableProps) {
     const { styles } = useStyle();
 
@@ -230,6 +253,19 @@ export function TableReservedLeads({
                 onRefresh={onRefresh}
                 leftExtra={columnSelectorDropdown}
                 showActions={false}
+                region={region}
+                uf={uf}
+                city={city}
+                provider={provider}
+                dateFrom={dateFrom}
+                dateTo={dateTo}
+
+                onRegionChange={onRegionChange}
+                onUfChange={onUfChange}
+                onCityChange={onCityChange}
+                onProviderChange={onProviderChange}
+                onDateFromChange={onDateFromChange}
+                onDateToChange={onDateToChange}
             />
 
             <div

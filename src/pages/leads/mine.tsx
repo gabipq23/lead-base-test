@@ -12,6 +12,12 @@ export function MineLeadsPage({ slug }: { slug?: string }) {
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(100);
     const [search, setSearch] = useState("");
+    const [region, setRegion] = useState<string | undefined>(undefined);
+    const [uf, setUf] = useState<string | undefined>(undefined);
+    const [city, setCity] = useState<string | undefined>(undefined);
+    const [provider, setProvider] = useState<string | undefined>(undefined);
+    const [dateFrom, setDateFrom] = useState<string | undefined>(undefined);
+    const [dateTo, setDateTo] = useState<string | undefined>(undefined);
 
     const title = isAdminDomain && user?.user?.role === "ADMIN"
         ? "Leads Reservados"
@@ -22,6 +28,12 @@ export function MineLeadsPage({ slug }: { slug?: string }) {
         operatorSlug: slug,
         page,
         per_page: pageSize,
+        region,
+        uf,
+        city,
+        provider,
+        date_from: dateFrom,
+        date_to: dateTo,
     });
 
     const pagination = data?.pagination;
@@ -49,6 +61,18 @@ export function MineLeadsPage({ slug }: { slug?: string }) {
                     setPage(1);
                 }}
                 onRefresh={() => refetch()}
+                region={region}
+                uf={uf}
+                city={city}
+                provider={provider}
+                dateFrom={dateFrom}
+                dateTo={dateTo}
+                onRegionChange={setRegion}
+                onUfChange={setUf}
+                onCityChange={setCity}
+                onProviderChange={setProvider}
+                onDateFromChange={setDateFrom}
+                onDateToChange={setDateTo}
             />
         </div>
     );
