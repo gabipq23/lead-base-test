@@ -10,6 +10,7 @@ import { normalizeNames } from "@/utils/orders.util";
 
 import { ElapsedTimeCell } from "./timer";
 import { getElapsedMs } from "@/utils/elapsedTime";
+import { ChatBubbleIcon } from "@radix-ui/react-icons";
 
 const OPERATOR_ASSETS: Record<string, { src: string; className: string }> = {
     claro: { src: "/claro.png", className: "h-8 w-8" },
@@ -155,6 +156,31 @@ export function getColumnsReservedLeads(options: GetColumnsOptions): TableColumn
         //         </Tooltip>
         //     ),
         // },
+        {
+            key: "button",
+            title: "Chatter",
+
+            width: 70,
+            render: () => (
+                <div className="flex items-center justify-center">
+                    <Tooltip
+                        placement="top"
+                        title="Prévia de conversa "
+                        overlayInnerStyle={{ fontSize: 12 }}
+                    >
+                        <Button
+                            style={{ width: 34, height: 34, padding: 0 }}
+                            type="default"
+                            size="small"
+                            onClick={(event) => {
+                                event.stopPropagation();
+                            }}
+                        >
+                            <ChatBubbleIcon />
+                        </Button>
+                    </Tooltip>
+                </div>)
+        },
         ...getLeadAvailabilityColumns(),
         {
             key: "id",
@@ -404,6 +430,12 @@ export function getColumnsReservedLeads(options: GetColumnsOptions): TableColumn
             dataIndex: "operadora",
             width: 160,
             render: (_, record) => record.phone_validation?.operadora ?? "-",
+        }, {
+            key: "whatsapp",
+            title: "WhatsApp",
+            dataIndex: "whatsapp",
+            width: 140,
+            render: (_, record) => record.whatsapp ?? "-",
         },
         {
             key: "additional_phone",
@@ -451,6 +483,13 @@ export function getColumnsReservedLeads(options: GetColumnsOptions): TableColumn
             dataIndex: "additional_operadora",
             width: 160,
             render: (_, record) => record.additional_phone_validation?.operadora ?? "-",
+        },
+        {
+            key: "whatsapp",
+            title: "WhatsApp",
+            dataIndex: "whatsapp",
+            width: 140,
+            render: (_, record) => record.whatsapp ?? "-",
         },
         {
             key: "email",

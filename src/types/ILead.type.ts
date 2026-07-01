@@ -105,6 +105,7 @@ export interface ILead {
   is_cep_valid: boolean;
   is_phone_valid: boolean;
   is_additional_phone_valid: boolean;
+  whatsapp: boolean;
 }
 
 export interface ILeadPagination {

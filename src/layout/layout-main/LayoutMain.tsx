@@ -11,6 +11,7 @@ import { usePartnerQuery } from "../../hooks/partners/usePartnerQuery";
 import { useCompanyQuery } from "../../hooks/companies/useCompanyQuery";
 import { useAdminScope } from "../../context/admin-scope-provider";
 import { useMemo } from "react";
+import { Headset } from "lucide-react";
 // import { useLocation } from "@tanstack/react-router";
 
 const segmentOptions = [
@@ -126,6 +127,16 @@ export function LayoutMain() {
               },
             }}
           >
+            <Button onClick={() => { }} icon={<Headset size={16} />} type="text" className="logout-btn" />
+            <style>
+              {`
+              .logout-btn:hover .anticon {
+                color: ${color} !important;
+                font-size: 17px;
+              }
+
+              `}
+            </style>
             <Button
               type="text"
               onClick={toggleDarkMode}

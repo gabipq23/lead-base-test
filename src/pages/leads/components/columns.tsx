@@ -412,6 +412,13 @@ export function getColumns(options: GetColumnsOptions): TableColumnsType<ILead> 
             render: (_, record) => record.phone_validation?.operadora ?? "-",
         },
         {
+            key: "whatsapp",
+            title: "WhatsApp",
+            dataIndex: "whatsapp",
+            width: 140,
+            render: (_, record) => record.whatsapp ?? "-",
+        },
+        {
             key: "additional_phone",
             title: "Telefone Adicional",
             dataIndex: "additional_phone",
@@ -464,6 +471,13 @@ export function getColumns(options: GetColumnsOptions): TableColumnsType<ILead> 
             dataIndex: "additional_operadora",
             width: 160,
             render: (_, record) => record.additional_phone_validation?.operadora ?? "-",
+        },
+        {
+            key: "whatsapp",
+            title: "WhatsApp",
+            dataIndex: "whatsapp",
+            width: 140,
+            render: (_, record) => record.whatsapp ?? "-",
         },
         {
             key: "email",

@@ -24,14 +24,15 @@ export const menuOptionsCommon: MenuItem[] = [
       },
     ],
   },
-  // {
-  //   label: "Tools",
-  //   to: "/app/tools",
-  // },
-  // {
-  //   label: "Dashboard",
-  //   to: "/app/dashboard",
-  // },
+
+  {
+    label: "Tools",
+    to: "/app/tools",
+  },
+  {
+    label: "Dashboard",
+    to: "/app/dashboard",
+  },
 ];
 
 export const menuOptionsAdmin: MenuItem[] = [
