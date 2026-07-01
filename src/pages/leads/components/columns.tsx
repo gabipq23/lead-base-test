@@ -3,7 +3,7 @@ import { Button, Tag, Tooltip, type TableColumnsType } from "antd";
 import { CheckCircle2, MapIcon, MapPinned, Mars, Venus, XCircle } from "lucide-react";
 
 import type { ILead } from "@/types/ILead.type";
-import { formatCPF } from "@/utils/document.util";
+import { formatCEP, formatCPF } from "@/utils/document.util";
 import { formatPhoneNumber } from "@/utils/number.utils";
 import { getPersonData } from "@/pages/orders/common/components/columns";
 import { normalizeNames } from "@/utils/orders.util";
@@ -596,9 +596,22 @@ export function getColumns(options: GetColumnsOptions): TableColumnsType<ILead> 
             title: "CEP",
             dataIndex: "cep",
             width: 120,
-            render: (cep: string) => {
+            render: (cep: string, record) => {
+                const isValid = record.is_cep_valid;
+
+                const validationIcon =
+                    isValid === true ? (
+                        <Tooltip title="CEP válido" placement="top" overlayInnerStyle={{ fontSize: 12 }}>
+                            <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" />
+                        </Tooltip>
+                    ) : isValid === false ? (
+                        <Tooltip title="CEP inválido" placement="top" overlayInnerStyle={{ fontSize: 12 }}>
+                            <XCircle className="h-4 w-4 text-red-500 shrink-0" />
+                        </Tooltip>
+                    ) : null;
+
                 if (!cep) {
-                    return (
+                    return (<div className="flex items-center gap-1 min-w-0">
                         <span
                             style={{
                                 display: "inline-block",
@@ -608,11 +621,17 @@ export function getColumns(options: GetColumnsOptions): TableColumnsType<ILead> 
                                 background: "#d9d9d9",
                                 filter: "blur(4px)",
                             }}
-                        />
+                        />  {validationIcon}
+                    </div>
                     );
                 }
+                return (
+                    <div className="flex items-center gap-1 min-w-0">
+                        <span className="truncate">{formatCEP(cep)}</span>
+                        {validationIcon}
+                    </div>
+                );
 
-                return cep;
             },
         },
 

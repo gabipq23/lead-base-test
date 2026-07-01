@@ -43,7 +43,7 @@ const url = window.location.origin;
 export const options = {
   admin: {
     name: "Admin",
-    logo: "/leadbase_logo.png",
+    logo: "/leadbase.png",
     primaryColor: "#333333",
     baseUrl: "https://evolution.bigdates.com.br:3720",
     favicon: `${url}/favicon/favicon.ico`,

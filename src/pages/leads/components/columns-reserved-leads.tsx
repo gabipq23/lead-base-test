@@ -3,7 +3,7 @@ import { Button, message, Tag, Tooltip, type TableColumnsType } from "antd";
 import { CheckCircle2, MapIcon, MapPinned, Mars, Venus, XCircle } from "lucide-react";
 
 import type { ILead } from "@/types/ILead.type";
-import { formatCPF } from "@/utils/document.util";
+import { formatCEP, formatCPF } from "@/utils/document.util";
 import { formatPhoneNumber } from "@/utils/number.utils";
 import { getPersonData } from "@/pages/orders/common/components/columns";
 import { normalizeNames } from "@/utils/orders.util";
@@ -606,10 +606,49 @@ export function getColumnsReservedLeads(options: GetColumnsOptions): TableColumn
             title: "CEP",
             dataIndex: "cep",
             width: 120,
-            render: (cep: string) => {
+            render: (cep: string, record) => {
 
 
-                return renderCopyableText(cep);
+                const isValid = record.is_cep_valid;
+
+                return (
+                    <div className="flex items-center gap-1 min-w-0">
+                        <Tooltip placement="topLeft" title={cep} overlayInnerStyle={{ fontSize: 12 }}>
+                            <span
+                                style={{
+                                    display: "block",
+                                    maxWidth: 240,
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    whiteSpace: "nowrap",
+                                }}
+                            >
+                                {formatCEP(cep)}
+                            </span>
+                        </Tooltip>
+
+                        {isValid === true ? (
+                            <Tooltip title="CEP válido" placement="top" overlayInnerStyle={{ fontSize: 12 }}>
+                                <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" />
+                            </Tooltip>
+                        ) : isValid === false ? (
+                            <Tooltip title="CEP inválido" placement="top" overlayInnerStyle={{ fontSize: 12 }}>
+                                <XCircle className="h-4 w-4 text-red-500 shrink-0" />
+                            </Tooltip>
+                        ) : null}
+
+                        <Tooltip title="Copiar" overlayInnerStyle={{ fontSize: 12 }}>
+                            <CopyOutlined
+                                onClick={(e) => { e.stopPropagation(); handleCopy(cep); }}
+                                style={{
+                                    color: "#8c8c8c",
+                                    cursor: "pointer",
+                                    flexShrink: 0,
+                                }}
+                            />
+                        </Tooltip>
+                    </div>
+                );
             },
         },
 
@@ -619,7 +658,8 @@ export function getColumnsReservedLeads(options: GetColumnsOptions): TableColumn
             dataIndex: "uf",
             width: 160,
             render: (_, record) => renderCopyableText(record.uf),
-        }, {
+        },
+        {
             key: "city",
             title: "Cidade",
             dataIndex: "city",

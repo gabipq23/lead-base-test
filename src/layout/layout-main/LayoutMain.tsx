@@ -213,7 +213,7 @@ export function LayoutMain() {
 
         <p className="text-center text-[12px] flex items-center gap-1 m-0">
           Powered by
-          <img src="/leadbase_logo.png" className="h-4" />
+          <img src="/leadbase_logo.svg" className="h-6" />
         </p>
       </footer>
     </Layout>
