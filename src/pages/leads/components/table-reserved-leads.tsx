@@ -6,11 +6,11 @@ import type { TableColumnsType } from "antd";
 import { useStyle } from "@/style/tableStyle";
 import type { ILead } from "@/types/ILead.type";
 
-import { getColumns } from "./columns";
 import { TableToolbar } from "./table-toolbar";
 import { LeadViewModal } from "./view-modal";
 import { useUpdateLeadMutation } from "@/hooks/leads/useUpdateLeadsMutation";
 import { useAuth } from "@/context/auth-provider";
+import { getColumnsReservedLeads } from "./columns-reserved-leads";
 
 function getColKey(col: TableColumnsType<ILead>[number]): string {
     if ("key" in col && col.key) return String(col.key);
@@ -56,7 +56,7 @@ interface LeadsTableProps {
     searchText: string;
     onSearchChange: (value: string) => void;
     onRefresh: () => void;
-    showReservationInfo?: boolean;
+
 }
 
 export function TableReservedLeads({
@@ -70,13 +70,15 @@ export function TableReservedLeads({
     searchText,
     onSearchChange,
     onRefresh,
-    showReservationInfo = false,
+
 }: LeadsTableProps) {
     const { styles } = useStyle();
+
     const currentUser = useAuth().user!;
     const topScrollRef = useRef<HTMLDivElement>(null);
 
     const updateMutation = useUpdateLeadMutation();
+
     const [now, setNow] = useState(Date.now());
     const tableWrapRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
@@ -88,11 +90,11 @@ export function TableReservedLeads({
     }, []);
     const columns = useMemo(
         () =>
-            getColumns({
-                showReservationInfo,
+            getColumnsReservedLeads({
+
                 now,
             }),
-        [showReservationInfo, now],
+        [now],
     );
     const [viewingLead, setViewingLead] = useState<ILead | null>(null);
 
@@ -220,8 +222,6 @@ export function TableReservedLeads({
         };
     }, [filteredData, isLoading, columns]);
 
-
-
     return (
         <>
             <TableToolbar
@@ -265,7 +265,6 @@ export function TableReservedLeads({
                     scroll={{ x: "max-content", y: 800 }}
                     onRow={(record) => ({
                         onClick: () => {
-
                             setViewingLead(record);
                         },
                         style: {

@@ -24,7 +24,7 @@ export function LeadsPage() {
     return (
         <div className="py-6 min-h-[calc(100vh-140px)]">
             <Typography.Title level={3} style={{ marginBottom: 4 }}>
-                Leads ao vivo
+                Painel de Leads
             </Typography.Title>
 
 

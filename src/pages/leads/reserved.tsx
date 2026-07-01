@@ -74,7 +74,7 @@ export function ReservedLeadsPage() {
                             setSearch(value);
                             setPage(1);
                         }}
-                        onRefresh={() => refetch()} showReservationInfo
+                        onRefresh={() => refetch()}
                     />
                 </div>
             )}

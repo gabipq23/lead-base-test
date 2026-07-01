@@ -24,6 +24,14 @@ export const menuOptionsCommon: MenuItem[] = [
       },
     ],
   },
+  // {
+  //   label: "Tools",
+  //   to: "/app/tools",
+  // },
+  // {
+  //   label: "Dashboard",
+  //   to: "/app/dashboard",
+  // },
 ];
 
 export const menuOptionsAdmin: MenuItem[] = [
@@ -44,53 +52,53 @@ export const menuOptionsAdmin: MenuItem[] = [
       },
     ],
   },
-  ...menuOptionsCommon,
 
   {
-    label: "Leads ao vivo",
+    label: "Painel de Leads",
     to: "/app/leads",
   },
   {
     label: "Leads Reservados",
     to: "/app/reserved-leads",
   },
+  ...menuOptionsCommon,
 ];
 
 // telas do menu específicas para cada empresa
 export const menuOptionsTim: MenuItem[] = [
-  ...menuOptionsCommon,
   {
-    label: "Leads ao vivo",
+    label: "Painel de Leads",
     to: "/app/leads",
   },
   {
     label: "Meus Leads",
     to: "/app/mine-leads",
   },
+  ...menuOptionsCommon,
 ];
 
 export const menuOptionsClaro: MenuItem[] = [
-  ...menuOptionsCommon,
   {
-    label: "Leads ao vivo",
+    label: "Painel de Leads",
     to: "/app/leads",
   },
   {
     label: "Meus Leads",
     to: "/app/mine-leads",
   },
+  ...menuOptionsCommon,
 ];
 
 export const menuOptionsVivo: MenuItem[] = [
-  ...menuOptionsCommon,
   {
-    label: "Leads ao vivo",
+    label: "Painel de Leads",
     to: "/app/leads",
   },
   {
     label: "Meus Leads",
     to: "/app/mine-leads",
   },
+  ...menuOptionsCommon,
 ];
 
 export const menuOptionsVR: MenuItem[] = [...menuOptionsCommon];
@@ -98,64 +106,58 @@ export const menuOptionsVR: MenuItem[] = [...menuOptionsCommon];
 export const menuOptionsC6: MenuItem[] = [...menuOptionsCommon];
 
 export const menuOptionsBrisanet: MenuItem[] = [
-  ...menuOptionsCommon,
   {
-    label: "Leads ao vivo",
+    label: "Painel de Leads",
     to: "/app/leads",
   },
   {
     label: "Meus Leads",
     to: "/app/mine-leads",
   },
+  ...menuOptionsCommon,
 ];
 export const menuOptionsAlgar: MenuItem[] = [
-  ...menuOptionsCommon,
   {
-    label: "Leads ao vivo",
+    label: "Painel de Leads",
     to: "/app/leads",
   },
   {
     label: "Meus Leads",
     to: "/app/mine-leads",
   },
+  ...menuOptionsCommon,
 ];
 export const menuOptionsVero: MenuItem[] = [
-  ...menuOptionsCommon,
   {
-    label: "Leads ao vivo",
+    label: "Painel de Leads",
     to: "/app/leads",
   },
   {
     label: "Meus Leads",
     to: "/app/mine-leads",
   },
+  ...menuOptionsCommon,
 ];
 
 export const menuOptionsNio: MenuItem[] = [
-  ...menuOptionsCommon,
   {
-    label: "Leads ao vivo",
+    label: "Painel de Leads",
     to: "/app/leads",
   },
   {
     label: "Meus Leads",
     to: "/app/mine-leads",
   },
+  ...menuOptionsCommon,
 ];
 export const menuOptionsDesktop: MenuItem[] = [
-  ...menuOptionsCommon,
-
+  {
+    label: "Painel de Leads",
+    to: "/app/leads",
+  },
   {
     label: "Meus Leads",
     to: "/app/mine-leads",
   },
-  {
-    label: "LPs",
-    items: [
-      {
-        label: "Banda Larga PF",
-        href: "https://desktop.promo/",
-      },
-    ],
-  },
+  ...menuOptionsCommon,
 ];

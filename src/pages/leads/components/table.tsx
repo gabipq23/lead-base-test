@@ -45,7 +45,6 @@ function getSelectableKeys(cols: TableColumnsType<ILead>): string[] {
         .filter(Boolean);
 }
 
-
 interface LeadsTableProps {
     data: ILead[];
     isLoading: boolean;
@@ -76,6 +75,7 @@ export function TableMain({
     lastUpdatedAt,
 }: LeadsTableProps) {
     const { styles } = useStyle();
+
     const topScrollRef = useRef<HTMLDivElement>(null);
     const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
     const [buyModalOpen, setBuyModalOpen] = useState(false);
@@ -98,7 +98,6 @@ export function TableMain({
         [showReservationInfo, now],
     );
     const [viewingLead, setViewingLead] = useState<ILead | null>(null);
-
 
 
     const [visibleColumns, setVisibleColumns] = useState<string[]>(() =>
@@ -215,6 +214,7 @@ export function TableMain({
             tableBody.removeEventListener("scroll", syncFromTable);
         };
     }, [filteredData, isLoading, columns]);
+
     const selectedLeads = useMemo(
         () =>
             filteredData.filter(item =>
@@ -288,7 +288,7 @@ export function TableMain({
                     }}
                     scroll={{ x: "max-content", y: 800 }}
                     onRow={(record) => ({
-
+                        onClick: () => { setBuyModalOpen(true); setSelectedRowKeys([record.id]) },
                         style: {
                             cursor: record.is_reserved ? "not-allowed" : "pointer",
                         },
@@ -302,20 +302,16 @@ export function TableMain({
                 onClose={() => setViewingLead(null)}
             />
             <BuyLeadsModal
-
                 open={buyModalOpen}
-
                 leads={selectedLeads}
-
                 credits={reservation.availableBalance}
                 totalCost={reservation.totalCost}
                 confirmDisabled={!reservation.canReserve}
                 confirmLoading={reservation.isPending}
-
                 onCancel={() => {
                     setBuyModalOpen(false)
+                    setSelectedRowKeys([]);
                 }}
-
                 onConfirm={async () => {
                     await reservation.reserveLeads(selectedLeads.map((lead) => lead.id));
                     setBuyModalOpen(false);

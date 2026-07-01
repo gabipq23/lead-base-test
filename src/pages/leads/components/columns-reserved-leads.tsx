@@ -1,5 +1,5 @@
-
-import { Button, Tag, Tooltip, type TableColumnsType } from "antd";
+import { CopyOutlined } from "@ant-design/icons";
+import { Button, message, Tag, Tooltip, type TableColumnsType } from "antd";
 import { CheckCircle2, MapIcon, MapPinned, Mars, Venus, XCircle } from "lucide-react";
 
 import type { ILead } from "@/types/ILead.type";
@@ -25,16 +25,49 @@ const LEAD_OPERATOR_KEYS = ["claro", "tim", "oi", "sky", "nio", "algar", "vivo"]
 
 type LeadOperatorKey = (typeof LEAD_OPERATOR_KEYS)[number];
 
+function handleCopy(value: string | number | null | undefined) {
+    if (value == null || value === "") return;
+
+    navigator.clipboard.writeText(String(value));
+    message.success("Copiado!");
+}
 
 export function getStatusColor(status: string): string {
     const normalized = status.toUpperCase();
 
     if (normalized === "DISPONIVEL") return "green";
     if (normalized === "RESERVADO") return "red";
-    if (normalized === "VENDIDO") return "blue";
+
     return "default";
 }
 
+function renderCopyableText(value: string | number | null | undefined) {
+    if (value == null || value === "") {
+        return "-";
+    }
+
+    return (
+        <div className="flex items-center gap-1">
+            <span className="truncate">{value}</span>
+            <Tooltip title="Copiar" overlayInnerStyle={{ fontSize: 12 }}>
+                <CopyOutlined
+                    onClick={(event) => {
+                        event.stopPropagation();
+
+
+                        handleCopy(value);
+                    }}
+                    style={{
+                        color: "#8c8c8c",
+                        cursor: "pointer",
+                        opacity: 1,
+                        flexShrink: 0,
+                    }}
+                />
+            </Tooltip>
+        </div>
+    );
+}
 
 function renderAvailability(value: boolean | null | undefined, foundViaRange?: boolean | null) {
     if (value === null || value === undefined) return "-";
@@ -99,12 +132,12 @@ function getLeadAvailabilityColumns(): TableColumnsType<ILead> {
     });
 }
 interface GetColumnsOptions {
-    showReservationInfo?: boolean;
+
     now: number;
 }
 
-export function getColumns(options: GetColumnsOptions): TableColumnsType<ILead> {
-    const { showReservationInfo = false, now } = options;
+export function getColumnsReservedLeads(options: GetColumnsOptions): TableColumnsType<ILead> {
+    const { now } = options;
 
     return [
         // {
@@ -138,7 +171,6 @@ export function getColumns(options: GetColumnsOptions): TableColumnsType<ILead> 
             render: (status: string) => <Tag color={getStatusColor(status)}>{status}</Tag>,
             filters: [{ text: "Reservado", value: "RESERVADO" }, { text: "Disponível", value: "DISPONIVEL" }],
             onFilter: (value, record) => record.status === value,
-
         },
         {
             key: "client_type",
@@ -149,31 +181,31 @@ export function getColumns(options: GetColumnsOptions): TableColumnsType<ILead> 
             filters: [{ text: "PF", value: "PF" }, { text: "PJ", value: "PJ" }],
             onFilter: (value, record) => record.client_type === value,
 
+
         },
-        ...(showReservationInfo
-            ? [
-                {
-                    key: "reserved_at",
-                    title: "Reservado em",
-                    dataIndex: "reserved_at",
-                    width: 140,
-                    render: (reservedAt: string | null) => reservedAt ?? "-",
-                },
-                {
-                    key: "reserved_by_user_id",
-                    title: "Reservado por",
-                    dataIndex: "reserved_by_user_id",
-                    width: 130,
-                    render: (userId: number | null) => userId ?? "-",
-                },
-            ]
-            : []),
+
+        {
+            key: "reserved_at",
+            title: "Reservado em",
+            dataIndex: "reserved_at",
+            width: 140,
+            render: (reservedAt: string | null) => renderCopyableText(reservedAt),
+        },
+        {
+            key: "reserved_by_user_id",
+            title: "Reservado por",
+            dataIndex: "reserved_by_user_id",
+            width: 130,
+            render: (userId: number | null) => renderCopyableText(userId),
+        },
+
+
         {
             key: "created_at",
             title: "Criado em",
             dataIndex: "created_at",
             width: 100,
-            render: (createdAt: string) => createdAt ?? "-",
+            render: (createdAt: string) => renderCopyableText(createdAt),
         },
         {
             key: "elapsed",
@@ -193,6 +225,7 @@ export function getColumns(options: GetColumnsOptions): TableColumnsType<ILead> 
                 return aElapsed - bElapsed;
             },
         },
+
         {
             title: "Nome",
             dataIndex: "full_name",
@@ -201,21 +234,6 @@ export function getColumns(options: GetColumnsOptions): TableColumnsType<ILead> 
                 const { full_name } = getPersonData(record);
                 const isNamesMatch =
                     normalizeNames(full_name, record.rfb_name);
-
-                if (!full_name) {
-                    return (
-                        <span
-                            style={{
-                                display: "inline-block",
-                                width: 140,
-                                height: 16,
-                                borderRadius: 4,
-                                background: "#d9d9d9",
-                                filter: "blur(4px)",
-                            }}
-                        />
-                    );
-                }
 
                 return (
                     <div className="flex items-center gap-1 min-w-0">
@@ -255,7 +273,16 @@ export function getColumns(options: GetColumnsOptions): TableColumnsType<ILead> 
                             </Tooltip>
                         ) : null}
 
-
+                        <Tooltip title="Copiar" overlayInnerStyle={{ fontSize: 12 }}>
+                            <CopyOutlined
+                                onClick={(e) => { e.stopPropagation(); handleCopy(full_name); }}
+                                style={{
+                                    color: "#8c8c8c",
+                                    cursor: "pointer",
+                                    flexShrink: 0,
+                                }}
+                            />
+                        </Tooltip>
                     </div>
                 );
             },
@@ -281,7 +308,7 @@ export function getColumns(options: GetColumnsOptions): TableColumnsType<ILead> 
                     );
                 }
 
-                return formatCPF(cpf);
+                return renderCopyableText(formatCPF(cpf));
             },
         }, {
             key: "mother_name",
@@ -290,22 +317,9 @@ export function getColumns(options: GetColumnsOptions): TableColumnsType<ILead> 
             width: 180,
             ellipsis: true,
             render: (motherName: string) => {
-                if (!motherName) {
-                    return (
-                        <span
-                            style={{
-                                display: "inline-block",
-                                width: 160,
-                                height: 16,
-                                borderRadius: 4,
-                                background: "#d9d9d9",
-                                filter: "blur(4px)",
-                            }}
-                        />
-                    );
-                }
 
-                return motherName;
+
+                return renderCopyableText(motherName);
             },
         },
         {
@@ -314,22 +328,9 @@ export function getColumns(options: GetColumnsOptions): TableColumnsType<ILead> 
             dataIndex: "birth_date",
             width: 140,
             render: (birthDate: string) => {
-                if (!birthDate) {
-                    return (
-                        <span
-                            style={{
-                                display: "inline-block",
-                                width: 90,
-                                height: 16,
-                                borderRadius: 4,
-                                background: "#d9d9d9",
-                                filter: "blur(4px)",
-                            }}
-                        />
-                    );
-                }
 
-                return birthDate;
+
+                return renderCopyableText(birthDate);
             },
         },
         {
@@ -339,7 +340,8 @@ export function getColumns(options: GetColumnsOptions): TableColumnsType<ILead> 
             width: 90,
             render: (age: number | string) => {
 
-                return age || "-";
+
+                return age;
             },
         },
         {
@@ -365,41 +367,33 @@ export function getColumns(options: GetColumnsOptions): TableColumnsType<ILead> 
             dataIndex: "phone",
             width: 160,
             render: (phone: string, record) => {
-                const isValid = record.is_phone_valid;
 
-                const validationIcon =
-                    isValid === true ? (
-                        <Tooltip title="Telefone válido" placement="top" overlayInnerStyle={{ fontSize: 12 }}>
-                            <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" />
-                        </Tooltip>
-                    ) : isValid === false ? (
-                        <Tooltip title="Telefone inválido" placement="top" overlayInnerStyle={{ fontSize: 12 }}>
-                            <XCircle className="h-4 w-4 text-red-500 shrink-0" />
-                        </Tooltip>
-                    ) : null;
-
-                if (!phone) {
-                    return (
-                        <div className="flex items-center gap-1 min-w-0">
-                            <span
-                                style={{
-                                    display: "inline-block",
-                                    width: 120,
-                                    height: 16,
-                                    borderRadius: 4,
-                                    background: "#d9d9d9",
-                                    filter: "blur(4px)",
-                                }}
-                            />
-                            {validationIcon}
-                        </div>
-                    );
-                }
+                const isValid = record.phone_validation?.valid;
 
                 return (
                     <div className="flex items-center gap-1 min-w-0">
                         <span className="truncate">{formatPhoneNumber(phone)}</span>
-                        {validationIcon}
+
+                        {isValid === true ? (
+                            <Tooltip title="Telefone válido" placement="top" overlayInnerStyle={{ fontSize: 12 }}>
+                                <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" />
+                            </Tooltip>
+                        ) : isValid === false ? (
+                            <Tooltip title="Telefone inválido" placement="top" overlayInnerStyle={{ fontSize: 12 }}>
+                                <XCircle className="h-4 w-4 text-red-500 shrink-0" />
+                            </Tooltip>
+                        ) : null}
+
+                        <Tooltip title="Copiar" overlayInnerStyle={{ fontSize: 12 }}>
+                            <CopyOutlined
+                                onClick={(e) => { e.stopPropagation(); handleCopy(phone); }}
+                                style={{
+                                    color: "#8c8c8c",
+                                    cursor: "pointer",
+                                    flexShrink: 0,
+                                }}
+                            />
+                        </Tooltip>
                     </div>
                 );
             },
@@ -417,43 +411,36 @@ export function getColumns(options: GetColumnsOptions): TableColumnsType<ILead> 
             dataIndex: "additional_phone",
             width: 160,
             render: (additional_phone: string, record) => {
-                const isValid = record.is_additional_phone_valid;
 
-                const validationIcon =
-                    isValid === true ? (
-                        <Tooltip title="Telefone válido" placement="top" overlayInnerStyle={{ fontSize: 12 }}>
-                            <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" />
-                        </Tooltip>
-                    ) : isValid === false ? (
-                        <Tooltip title="Telefone inválido" placement="top" overlayInnerStyle={{ fontSize: 12 }}>
-                            <XCircle className="h-4 w-4 text-red-500 shrink-0" />
-                        </Tooltip>
-                    ) : null;
 
-                if (!additional_phone) {
-                    return (
-                        <div className="flex items-center gap-1 min-w-0">
-                            <span
-                                style={{
-                                    display: "inline-block",
-                                    width: 120,
-                                    height: 16,
-                                    borderRadius: 4,
-                                    background: "#d9d9d9",
-                                    filter: "blur(4px)",
-                                }}
-                            />
-                            {validationIcon}
-                        </div>
-                    );
-                }
+                const isValid = record.additional_phone_validation?.valid;
 
                 return (
                     <div className="flex items-center gap-1 min-w-0">
                         <span className="truncate">
                             {formatPhoneNumber(additional_phone)}
                         </span>
-                        {validationIcon}
+
+                        {isValid === true ? (
+                            <Tooltip title="Telefone válido" placement="top" overlayInnerStyle={{ fontSize: 12 }}>
+                                <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" />
+                            </Tooltip>
+                        ) : isValid === false ? (
+                            <Tooltip title="Telefone inválido" placement="top" overlayInnerStyle={{ fontSize: 12 }}>
+                                <XCircle className="h-4 w-4 text-red-500 shrink-0" />
+                            </Tooltip>
+                        ) : null}
+
+                        <Tooltip title="Copiar" overlayInnerStyle={{ fontSize: 12 }}>
+                            <CopyOutlined
+                                onClick={(e) => { e.stopPropagation(); handleCopy(additional_phone); }}
+                                style={{
+                                    color: "#8c8c8c",
+                                    cursor: "pointer",
+                                    flexShrink: 0,
+                                }}
+                            />
+                        </Tooltip>
                     </div>
                 );
             },
@@ -472,37 +459,48 @@ export function getColumns(options: GetColumnsOptions): TableColumnsType<ILead> 
             width: 240,
             ellipsis: true,
             render: (email: string, record) => {
-                const isValid = record.is_email_valid;
 
-                const validationIcon =
-                    isValid === true ? (
-                        <Tooltip title="Email válido" placement="top" overlayInnerStyle={{ fontSize: 12 }}>
-                            <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" />
-                        </Tooltip>
-                    ) : isValid === false ? (
-                        <Tooltip title="Email inválido" placement="top" overlayInnerStyle={{ fontSize: 12 }}>
-                            <XCircle className="h-4 w-4 text-red-500 shrink-0" />
-                        </Tooltip>
-                    ) : null;
 
-                if (!email) {
-                    return (
-                        <div className="flex items-center gap-1 min-w-0">
+                const isValid = record.email_validation?.valid;
+
+                return (
+                    <div className="flex items-center gap-1 min-w-0">
+                        <Tooltip placement="topLeft" title={email} overlayInnerStyle={{ fontSize: 12 }}>
                             <span
                                 style={{
-                                    display: "inline-block",
-                                    width: 200,
-                                    height: 16,
-                                    borderRadius: 4,
-                                    background: "#d9d9d9",
-                                    filter: "blur(4px)",
+                                    display: "block",
+                                    maxWidth: 240,
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    whiteSpace: "nowrap",
+                                }}
+                            >
+                                {email}
+                            </span>
+                        </Tooltip>
+
+                        {isValid === true ? (
+                            <Tooltip title="Email válido" placement="top" overlayInnerStyle={{ fontSize: 12 }}>
+                                <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" />
+                            </Tooltip>
+                        ) : isValid === false ? (
+                            <Tooltip title="Email inválido" placement="top" overlayInnerStyle={{ fontSize: 12 }}>
+                                <XCircle className="h-4 w-4 text-red-500 shrink-0" />
+                            </Tooltip>
+                        ) : null}
+
+                        <Tooltip title="Copiar" overlayInnerStyle={{ fontSize: 12 }}>
+                            <CopyOutlined
+                                onClick={(e) => { e.stopPropagation(); handleCopy(email); }}
+                                style={{
+                                    color: "#8c8c8c",
+                                    cursor: "pointer",
+                                    flexShrink: 0,
                                 }}
                             />
-                            {validationIcon}
-                        </div>
-                    );
-                }
-
+                        </Tooltip>
+                    </div>
+                );
             },
         },
         // {
@@ -526,7 +524,7 @@ export function getColumns(options: GetColumnsOptions): TableColumnsType<ILead> 
             dataIndex: "channel",
             width: 140,
             ellipsis: true,
-            render: (channel: string) => channel || "-",
+            render: (channel: string) => renderCopyableText(channel),
         },
         {
             key: "campaign",
@@ -534,7 +532,7 @@ export function getColumns(options: GetColumnsOptions): TableColumnsType<ILead> 
             dataIndex: "campaign",
             width: 180,
             ellipsis: true,
-            render: (campaign: string) => campaign,
+            render: (campaign: string) => renderCopyableText(campaign),
         },
         {
             key: "purchase_intent",
@@ -542,7 +540,7 @@ export function getColumns(options: GetColumnsOptions): TableColumnsType<ILead> 
             dataIndex: "purchase_intent",
             width: 180,
             ellipsis: true,
-            render: (purchaseIntent: string) => purchaseIntent,
+            render: (purchaseIntent: string) => renderCopyableText(purchaseIntent),
         },
         {
             key: "purchase_intent_plan_price",
@@ -550,7 +548,7 @@ export function getColumns(options: GetColumnsOptions): TableColumnsType<ILead> 
             dataIndex: "purchase_intent_plan_price",
             width: 180,
             ellipsis: true,
-            render: (purchaseIntentPlanPrice: number | null) => <p className="flex">R$ {purchaseIntentPlanPrice?.toString() ?? "-"}</p>,
+            render: (purchaseIntentPlanPrice: number | null) => <span className="flex">R$ {renderCopyableText(purchaseIntentPlanPrice?.toString() ?? "-")}</span>,
         },
         {
             key: "landing_page",
@@ -559,22 +557,9 @@ export function getColumns(options: GetColumnsOptions): TableColumnsType<ILead> 
             width: 180,
             ellipsis: true,
             render: (landingPage: string) => {
-                if (!landingPage) {
-                    return (
-                        <span
-                            style={{
-                                display: "inline-block",
-                                width: 140,
-                                height: 16,
-                                borderRadius: 4,
-                                background: "#d9d9d9",
-                                filter: "blur(4px)",
-                            }}
-                        />
-                    );
-                }
 
-                return landingPage;
+
+                return renderCopyableText(landingPage);
             },
         },
         {
@@ -583,22 +568,9 @@ export function getColumns(options: GetColumnsOptions): TableColumnsType<ILead> 
             dataIndex: "cep",
             width: 120,
             render: (cep: string) => {
-                if (!cep) {
-                    return (
-                        <span
-                            style={{
-                                display: "inline-block",
-                                width: 90,
-                                height: 16,
-                                borderRadius: 4,
-                                background: "#d9d9d9",
-                                filter: "blur(4px)",
-                            }}
-                        />
-                    );
-                }
 
-                return cep;
+
+                return renderCopyableText(cep);
             },
         },
 
@@ -607,13 +579,13 @@ export function getColumns(options: GetColumnsOptions): TableColumnsType<ILead> 
             title: "UF",
             dataIndex: "uf",
             width: 160,
-            render: (uf: string) => uf,
+            render: (_, record) => renderCopyableText(record.uf),
         }, {
             key: "city",
             title: "Cidade",
             dataIndex: "city",
             width: 160,
-            render: (city: string) => city,
+            render: (city: string) => renderCopyableText(city),
         },
         {
             key: "district",
@@ -621,7 +593,7 @@ export function getColumns(options: GetColumnsOptions): TableColumnsType<ILead> 
             dataIndex: "district",
             width: 160,
             ellipsis: true,
-            render: (district: string) => district,
+            render: (district: string) => renderCopyableText(district),
         },
         {
             key: "address",
@@ -631,22 +603,9 @@ export function getColumns(options: GetColumnsOptions): TableColumnsType<ILead> 
             render: (_, record) => {
                 const value = record.address;
 
-                if (!value) {
-                    return (
-                        <span
-                            style={{
-                                display: "inline-block",
-                                width: 150,
-                                height: 16,
-                                borderRadius: 4,
-                                background: "#d9d9d9",
-                                filter: "blur(4px)",
-                            }}
-                        />
-                    );
-                }
 
-                return value;
+
+                return renderCopyableText(value);
             },
         },
         {
@@ -655,22 +614,9 @@ export function getColumns(options: GetColumnsOptions): TableColumnsType<ILead> 
             dataIndex: "number",
             width: 100,
             render: (numberValue: string) => {
-                if (!numberValue) {
-                    return (
-                        <span
-                            style={{
-                                display: "inline-block",
-                                width: 50,
-                                height: 16,
-                                borderRadius: 4,
-                                background: "#d9d9d9",
-                                filter: "blur(4px)",
-                            }}
-                        />
-                    );
-                }
 
-                return numberValue;
+
+                return renderCopyableText(numberValue);
             },
         },
 
@@ -679,28 +625,15 @@ export function getColumns(options: GetColumnsOptions): TableColumnsType<ILead> 
             dataIndex: "geolocation",
             width: 180,
             render: (geolocation) => {
-                if (!geolocation?.latitude || !geolocation?.longitude) {
-                    return (
-                        <span
-                            style={{
-                                display: "inline-block",
-                                width: 140,
-                                height: 16,
-                                borderRadius: 4,
-                                background: "#d9d9d9",
-                                filter: "blur(4px)",
-                            }}
-                        />
-                    );
-                }
 
-                const coordenadas = `Lat: ${geolocation.latitude}\nLong: ${geolocation.longitude}`;
+
+                const coordenadas = `Lat: ${geolocation?.latitude}\nLong: ${geolocation?.longitude}`;
 
                 return (
                     <Tooltip placement="topLeft" title={coordenadas} overlayInnerStyle={{ fontSize: 12 }}>
                         <div style={{ whiteSpace: "nowrap" }}>
-                            <div>Lat: {geolocation.latitude}</div>
-                            <div>Long: {geolocation.longitude}</div>
+                            <div>Lat: {geolocation?.latitude}</div>
+                            <div>Long: {geolocation?.longitude}</div>
                         </div>
                     </Tooltip>
                 );
@@ -711,18 +644,17 @@ export function getColumns(options: GetColumnsOptions): TableColumnsType<ILead> 
             dataIndex: ["geolocation", "maps_link"],
             width: 80,
             ellipsis: { showTitle: false },
-            render: (maps_link, record) =>
+            render: (maps_link) =>
                 maps_link ? (
                     <div className="flex items-center justify-center">
                         <Tooltip placement="topLeft" title={maps_link} overlayInnerStyle={{ fontSize: 12 }}>
                             <Button
-                                disabled={record.is_reserved}
                                 style={{ width: 32, height: 32, padding: 0 }}
                                 type="default"
                                 size="small"
                                 onClick={(event) => {
                                     event.stopPropagation();
-                                    if (record.is_reserved) return;
+
                                     window.open(maps_link, "_blank");
                                 }}
                             >
@@ -731,16 +663,7 @@ export function getColumns(options: GetColumnsOptions): TableColumnsType<ILead> 
                         </Tooltip>
                     </div>
                 ) : (
-                    <span
-                        style={{
-                            display: "inline-block",
-                            width: 32,
-                            height: 16,
-                            borderRadius: 6,
-                            background: "#d9d9d9",
-                            filter: "blur(4px)",
-                        }}
-                    />
+                    "-"
                 ),
         },
         {
@@ -748,18 +671,18 @@ export function getColumns(options: GetColumnsOptions): TableColumnsType<ILead> 
             dataIndex: ["geolocation", "street_view_link"],
             width: 110,
             ellipsis: { showTitle: false },
-            render: (street_view_link, record) =>
+            render: (street_view_link) =>
                 street_view_link ? (
                     <div className="flex items-center justify-center">
                         <Tooltip placement="topLeft" title={street_view_link} overlayInnerStyle={{ fontSize: 12 }}>
                             <Button
-                                disabled={record.is_reserved}
+
                                 style={{ width: 32, height: 32, padding: 0 }}
                                 type="default"
                                 size="small"
                                 onClick={(event) => {
                                     event.stopPropagation();
-                                    if (record.is_reserved) return;
+
                                     window.open(street_view_link, "_blank");
                                 }}
                             >
@@ -768,16 +691,7 @@ export function getColumns(options: GetColumnsOptions): TableColumnsType<ILead> 
                         </Tooltip>
                     </div>
                 ) : (
-                    <span
-                        style={{
-                            display: "inline-block",
-                            width: 32,
-                            height: 16,
-                            borderRadius: 6,
-                            background: "#d9d9d9",
-                            filter: "blur(4px)",
-                        }}
-                    />
+                    "-"
                 ),
         },
     ];

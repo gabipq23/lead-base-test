@@ -99,6 +99,12 @@ export interface ILead {
 
   created_at: string;
   updated_at: string;
+  origem: string;
+
+  is_email_valid: boolean;
+  is_cep_valid: boolean;
+  is_phone_valid: boolean;
+  is_additional_phone_valid: boolean;
 }
 
 export interface ILeadPagination {
