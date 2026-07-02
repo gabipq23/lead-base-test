@@ -14,7 +14,13 @@ export type PermissionResource =
   | "triggers"
   | "leads"
   | "mine-leads"
-  | "reserved-leads";
+  | "reserved-leads"
+  | "pj-checker"
+  | "check-operadora"
+  | "check-anatel"
+  | "zap-checker"
+  | "base2b-busca-socio"
+  | "base2b-busca-empresa";
 
 export type PermissionAction = "view" | "create" | "edit" | "delete";
 
@@ -31,7 +37,13 @@ type RestrictedRoute =
   | "/app/reserved-leads"
   | "/app/chat"
   | "/app/evolution"
-  | "/app/triggers";
+  | "/app/triggers"
+  | "/app/pj-checker"
+  | "/app/zap-checker"
+  | "/app/base2b-busca-socio"
+  | "/app/base2b-busca-empresa"
+  | "/app/check-operadora"
+  | "/app/check-anatel";
 
 const allCrudActions: PermissionAction[] = ["view", "create", "edit", "delete"];
 
@@ -52,6 +64,12 @@ const permissionsByRole: Record<
     "reserved-leads": allCrudActions,
     leads: allCrudActions,
     "mine-leads": allCrudActions,
+    "pj-checker": allCrudActions,
+    "check-operadora": allCrudActions,
+    "check-anatel": allCrudActions,
+    "zap-checker": allCrudActions,
+    "base2b-busca-socio": allCrudActions,
+    "base2b-busca-empresa": allCrudActions,
   },
   GESTOR: {
     users: allCrudActions,
@@ -63,6 +81,12 @@ const permissionsByRole: Record<
     "reserved-leads": allCrudActions,
     leads: allCrudActions,
     "mine-leads": allCrudActions,
+    "pj-checker": allCrudActions,
+    "check-operadora": allCrudActions,
+    "check-anatel": allCrudActions,
+    "zap-checker": allCrudActions,
+    "base2b-busca-socio": allCrudActions,
+    "base2b-busca-empresa": allCrudActions,
   },
   DIRETOR: {
     products: allCrudActions,
@@ -117,6 +141,12 @@ const routeResourceMap: Record<RestrictedRoute, PermissionResource> = {
   "/app/chat": "chat",
   "/app/evolution": "evolution",
   "/app/triggers": "triggers",
+  "/app/pj-checker": "pj-checker",
+  "/app/zap-checker": "zap-checker",
+  "/app/base2b-busca-socio": "base2b-busca-socio",
+  "/app/base2b-busca-empresa": "base2b-busca-empresa",
+  "/app/check-operadora": "check-operadora",
+  "/app/check-anatel": "check-anatel",
 };
 
 function resolveRestrictedRoute(path: string): RestrictedRoute | null {
@@ -138,6 +168,15 @@ function resolveRestrictedRoute(path: string): RestrictedRoute | null {
   if (path.startsWith("/app/chat")) return "/app/chat";
   if (path.startsWith("/app/evolution")) return "/app/evolution";
   if (path.startsWith("/app/triggers")) return "/app/triggers";
+
+  if (path.startsWith("/app/pj-checker")) return "/app/pj-checker";
+  if (path.startsWith("/app/zap-checker")) return "/app/zap-checker";
+  if (path.startsWith("/app/base2b-busca-socio"))
+    return "/app/base2b-busca-socio";
+  if (path.startsWith("/app/base2b-busca-empresa"))
+    return "/app/base2b-busca-empresa";
+  if (path.startsWith("/app/check-operadora")) return "/app/check-operadora";
+  if (path.startsWith("/app/check-anatel")) return "/app/check-anatel";
 
   return null;
 }

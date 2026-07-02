@@ -27,8 +27,35 @@ export const menuOptionsCommon: MenuItem[] = [
 
   {
     label: "Tools",
-    to: "/app/tools",
+    items: [
+      {
+        label: "Check Operadora",
+        to: "/app/check-operadora",
+      },
+      {
+        label: "Check Anatel",
+        to: "/app/check-anatel",
+      },
+      {
+        label: "PJ Checker",
+        to: "/app/pj-checker",
+      },
+        {
+        label: "Zap Checker",
+        to: "/app/zap-checker",
+      },  {
+        label: "Base2B / Busca-Sócio",
+        to: "/app/base2b-busca-socio",
+      },
+       {
+        label: "Base2B / Busca-Empresa",
+        to: "/app/base2b-busca-empresa",
+      },
+    ],
+   
   },
+
+
   {
     label: "Dashboard",
     to: "/app/dashboard",

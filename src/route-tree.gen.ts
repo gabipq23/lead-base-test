@@ -12,10 +12,12 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteRouteImport } from './routes/app/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app/index'
+import { Route as AppZapCheckerRouteImport } from './routes/app/zap-checker'
 import { Route as AppUsersRouteImport } from './routes/app/users'
 import { Route as AppTriggersRouteImport } from './routes/app/triggers'
 import { Route as AppStatementRouteImport } from './routes/app/statement'
 import { Route as AppReservedLeadsRouteImport } from './routes/app/reserved-leads'
+import { Route as AppPjCheckerRouteImport } from './routes/app/pj-checker'
 import { Route as AppPartnersRouteImport } from './routes/app/partners'
 import { Route as AppOrderRouteImport } from './routes/app/order'
 import { Route as AppMy_areaRouteImport } from './routes/app/my_area'
@@ -23,7 +25,11 @@ import { Route as AppMineLeadsRouteImport } from './routes/app/mine-leads'
 import { Route as AppLeadsRouteImport } from './routes/app/leads'
 import { Route as AppEvolutionRouteImport } from './routes/app/evolution'
 import { Route as AppCompaniesRouteImport } from './routes/app/companies'
+import { Route as AppCheckOperadoraRouteImport } from './routes/app/check-operadora'
+import { Route as AppCheckAnatelRouteImport } from './routes/app/check-anatel'
 import { Route as AppChatRouteImport } from './routes/app/chat'
+import { Route as AppBase2bBuscaSocioRouteImport } from './routes/app/base2b-busca-socio'
+import { Route as AppBase2bBuscaEmpresaRouteImport } from './routes/app/base2b-busca-empresa'
 import { Route as authLoginRouteImport } from './routes/(auth)/login'
 import { Route as AppOrderIndexRouteImport } from './routes/app/order/index'
 import { Route as AppMy_areaIndexRouteImport } from './routes/app/my_area/index'
@@ -53,6 +59,11 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppZapCheckerRoute = AppZapCheckerRouteImport.update({
+  id: '/zap-checker',
+  path: '/zap-checker',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const AppUsersRoute = AppUsersRouteImport.update({
   id: '/users',
   path: '/users',
@@ -71,6 +82,11 @@ const AppStatementRoute = AppStatementRouteImport.update({
 const AppReservedLeadsRoute = AppReservedLeadsRouteImport.update({
   id: '/reserved-leads',
   path: '/reserved-leads',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppPjCheckerRoute = AppPjCheckerRouteImport.update({
+  id: '/pj-checker',
+  path: '/pj-checker',
   getParentRoute: () => AppRouteRoute,
 } as any)
 const AppPartnersRoute = AppPartnersRouteImport.update({
@@ -108,9 +124,29 @@ const AppCompaniesRoute = AppCompaniesRouteImport.update({
   path: '/companies',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppCheckOperadoraRoute = AppCheckOperadoraRouteImport.update({
+  id: '/check-operadora',
+  path: '/check-operadora',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppCheckAnatelRoute = AppCheckAnatelRouteImport.update({
+  id: '/check-anatel',
+  path: '/check-anatel',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const AppChatRoute = AppChatRouteImport.update({
   id: '/chat',
   path: '/chat',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppBase2bBuscaSocioRoute = AppBase2bBuscaSocioRouteImport.update({
+  id: '/base2b-busca-socio',
+  path: '/base2b-busca-socio',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppBase2bBuscaEmpresaRoute = AppBase2bBuscaEmpresaRouteImport.update({
+  id: '/base2b-busca-empresa',
+  path: '/base2b-busca-empresa',
   getParentRoute: () => AppRouteRoute,
 } as any)
 const authLoginRoute = authLoginRouteImport.update({
@@ -184,7 +220,11 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteRouteWithChildren
   '/login': typeof authLoginRoute
+  '/app/base2b-busca-empresa': typeof AppBase2bBuscaEmpresaRoute
+  '/app/base2b-busca-socio': typeof AppBase2bBuscaSocioRoute
   '/app/chat': typeof AppChatRoute
+  '/app/check-anatel': typeof AppCheckAnatelRoute
+  '/app/check-operadora': typeof AppCheckOperadoraRoute
   '/app/companies': typeof AppCompaniesRoute
   '/app/evolution': typeof AppEvolutionRoute
   '/app/leads': typeof AppLeadsRoute
@@ -192,10 +232,12 @@ export interface FileRoutesByFullPath {
   '/app/my_area': typeof AppMy_areaRouteWithChildren
   '/app/order': typeof AppOrderRouteWithChildren
   '/app/partners': typeof AppPartnersRoute
+  '/app/pj-checker': typeof AppPjCheckerRoute
   '/app/reserved-leads': typeof AppReservedLeadsRoute
   '/app/statement': typeof AppStatementRoute
   '/app/triggers': typeof AppTriggersRoute
   '/app/users': typeof AppUsersRoute
+  '/app/zap-checker': typeof AppZapCheckerRoute
   '/app/': typeof AppIndexRoute
   '/app/claro/example': typeof AppClaroExampleRoute
   '/app/my_area/credit': typeof AppMy_areaCreditRoute
@@ -213,16 +255,22 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof authLoginRoute
+  '/app/base2b-busca-empresa': typeof AppBase2bBuscaEmpresaRoute
+  '/app/base2b-busca-socio': typeof AppBase2bBuscaSocioRoute
   '/app/chat': typeof AppChatRoute
+  '/app/check-anatel': typeof AppCheckAnatelRoute
+  '/app/check-operadora': typeof AppCheckOperadoraRoute
   '/app/companies': typeof AppCompaniesRoute
   '/app/evolution': typeof AppEvolutionRoute
   '/app/leads': typeof AppLeadsRoute
   '/app/mine-leads': typeof AppMineLeadsRoute
   '/app/partners': typeof AppPartnersRoute
+  '/app/pj-checker': typeof AppPjCheckerRoute
   '/app/reserved-leads': typeof AppReservedLeadsRoute
   '/app/statement': typeof AppStatementRoute
   '/app/triggers': typeof AppTriggersRoute
   '/app/users': typeof AppUsersRoute
+  '/app/zap-checker': typeof AppZapCheckerRoute
   '/app': typeof AppIndexRoute
   '/app/claro/example': typeof AppClaroExampleRoute
   '/app/my_area/credit': typeof AppMy_areaCreditRoute
@@ -242,7 +290,11 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/app': typeof AppRouteRouteWithChildren
   '/(auth)/login': typeof authLoginRoute
+  '/app/base2b-busca-empresa': typeof AppBase2bBuscaEmpresaRoute
+  '/app/base2b-busca-socio': typeof AppBase2bBuscaSocioRoute
   '/app/chat': typeof AppChatRoute
+  '/app/check-anatel': typeof AppCheckAnatelRoute
+  '/app/check-operadora': typeof AppCheckOperadoraRoute
   '/app/companies': typeof AppCompaniesRoute
   '/app/evolution': typeof AppEvolutionRoute
   '/app/leads': typeof AppLeadsRoute
@@ -250,10 +302,12 @@ export interface FileRoutesById {
   '/app/my_area': typeof AppMy_areaRouteWithChildren
   '/app/order': typeof AppOrderRouteWithChildren
   '/app/partners': typeof AppPartnersRoute
+  '/app/pj-checker': typeof AppPjCheckerRoute
   '/app/reserved-leads': typeof AppReservedLeadsRoute
   '/app/statement': typeof AppStatementRoute
   '/app/triggers': typeof AppTriggersRoute
   '/app/users': typeof AppUsersRoute
+  '/app/zap-checker': typeof AppZapCheckerRoute
   '/app/': typeof AppIndexRoute
   '/app/claro/example': typeof AppClaroExampleRoute
   '/app/my_area/credit': typeof AppMy_areaCreditRoute
@@ -274,7 +328,11 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/login'
+    | '/app/base2b-busca-empresa'
+    | '/app/base2b-busca-socio'
     | '/app/chat'
+    | '/app/check-anatel'
+    | '/app/check-operadora'
     | '/app/companies'
     | '/app/evolution'
     | '/app/leads'
@@ -282,10 +340,12 @@ export interface FileRouteTypes {
     | '/app/my_area'
     | '/app/order'
     | '/app/partners'
+    | '/app/pj-checker'
     | '/app/reserved-leads'
     | '/app/statement'
     | '/app/triggers'
     | '/app/users'
+    | '/app/zap-checker'
     | '/app/'
     | '/app/claro/example'
     | '/app/my_area/credit'
@@ -303,16 +363,22 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/login'
+    | '/app/base2b-busca-empresa'
+    | '/app/base2b-busca-socio'
     | '/app/chat'
+    | '/app/check-anatel'
+    | '/app/check-operadora'
     | '/app/companies'
     | '/app/evolution'
     | '/app/leads'
     | '/app/mine-leads'
     | '/app/partners'
+    | '/app/pj-checker'
     | '/app/reserved-leads'
     | '/app/statement'
     | '/app/triggers'
     | '/app/users'
+    | '/app/zap-checker'
     | '/app'
     | '/app/claro/example'
     | '/app/my_area/credit'
@@ -331,7 +397,11 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/(auth)/login'
+    | '/app/base2b-busca-empresa'
+    | '/app/base2b-busca-socio'
     | '/app/chat'
+    | '/app/check-anatel'
+    | '/app/check-operadora'
     | '/app/companies'
     | '/app/evolution'
     | '/app/leads'
@@ -339,10 +409,12 @@ export interface FileRouteTypes {
     | '/app/my_area'
     | '/app/order'
     | '/app/partners'
+    | '/app/pj-checker'
     | '/app/reserved-leads'
     | '/app/statement'
     | '/app/triggers'
     | '/app/users'
+    | '/app/zap-checker'
     | '/app/'
     | '/app/claro/example'
     | '/app/my_area/credit'
@@ -387,6 +459,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/app/zap-checker': {
+      id: '/app/zap-checker'
+      path: '/zap-checker'
+      fullPath: '/app/zap-checker'
+      preLoaderRoute: typeof AppZapCheckerRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/app/users': {
       id: '/app/users'
       path: '/users'
@@ -413,6 +492,13 @@ declare module '@tanstack/react-router' {
       path: '/reserved-leads'
       fullPath: '/app/reserved-leads'
       preLoaderRoute: typeof AppReservedLeadsRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/app/pj-checker': {
+      id: '/app/pj-checker'
+      path: '/pj-checker'
+      fullPath: '/app/pj-checker'
+      preLoaderRoute: typeof AppPjCheckerRouteImport
       parentRoute: typeof AppRouteRoute
     }
     '/app/partners': {
@@ -464,11 +550,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppCompaniesRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/app/check-operadora': {
+      id: '/app/check-operadora'
+      path: '/check-operadora'
+      fullPath: '/app/check-operadora'
+      preLoaderRoute: typeof AppCheckOperadoraRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/app/check-anatel': {
+      id: '/app/check-anatel'
+      path: '/check-anatel'
+      fullPath: '/app/check-anatel'
+      preLoaderRoute: typeof AppCheckAnatelRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/app/chat': {
       id: '/app/chat'
       path: '/chat'
       fullPath: '/app/chat'
       preLoaderRoute: typeof AppChatRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/app/base2b-busca-socio': {
+      id: '/app/base2b-busca-socio'
+      path: '/base2b-busca-socio'
+      fullPath: '/app/base2b-busca-socio'
+      preLoaderRoute: typeof AppBase2bBuscaSocioRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/app/base2b-busca-empresa': {
+      id: '/app/base2b-busca-empresa'
+      path: '/base2b-busca-empresa'
+      fullPath: '/app/base2b-busca-empresa'
+      preLoaderRoute: typeof AppBase2bBuscaEmpresaRouteImport
       parentRoute: typeof AppRouteRoute
     }
     '/(auth)/login': {
@@ -615,7 +729,11 @@ const AppOrderRouteWithChildren = AppOrderRoute._addFileChildren(
 )
 
 interface AppRouteRouteChildren {
+  AppBase2bBuscaEmpresaRoute: typeof AppBase2bBuscaEmpresaRoute
+  AppBase2bBuscaSocioRoute: typeof AppBase2bBuscaSocioRoute
   AppChatRoute: typeof AppChatRoute
+  AppCheckAnatelRoute: typeof AppCheckAnatelRoute
+  AppCheckOperadoraRoute: typeof AppCheckOperadoraRoute
   AppCompaniesRoute: typeof AppCompaniesRoute
   AppEvolutionRoute: typeof AppEvolutionRoute
   AppLeadsRoute: typeof AppLeadsRoute
@@ -623,10 +741,12 @@ interface AppRouteRouteChildren {
   AppMy_areaRoute: typeof AppMy_areaRouteWithChildren
   AppOrderRoute: typeof AppOrderRouteWithChildren
   AppPartnersRoute: typeof AppPartnersRoute
+  AppPjCheckerRoute: typeof AppPjCheckerRoute
   AppReservedLeadsRoute: typeof AppReservedLeadsRoute
   AppStatementRoute: typeof AppStatementRoute
   AppTriggersRoute: typeof AppTriggersRoute
   AppUsersRoute: typeof AppUsersRoute
+  AppZapCheckerRoute: typeof AppZapCheckerRoute
   AppIndexRoute: typeof AppIndexRoute
   AppClaroExampleRoute: typeof AppClaroExampleRoute
   AppTimExampleRoute: typeof AppTimExampleRoute
@@ -634,7 +754,11 @@ interface AppRouteRouteChildren {
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
+  AppBase2bBuscaEmpresaRoute: AppBase2bBuscaEmpresaRoute,
+  AppBase2bBuscaSocioRoute: AppBase2bBuscaSocioRoute,
   AppChatRoute: AppChatRoute,
+  AppCheckAnatelRoute: AppCheckAnatelRoute,
+  AppCheckOperadoraRoute: AppCheckOperadoraRoute,
   AppCompaniesRoute: AppCompaniesRoute,
   AppEvolutionRoute: AppEvolutionRoute,
   AppLeadsRoute: AppLeadsRoute,
@@ -642,10 +766,12 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppMy_areaRoute: AppMy_areaRouteWithChildren,
   AppOrderRoute: AppOrderRouteWithChildren,
   AppPartnersRoute: AppPartnersRoute,
+  AppPjCheckerRoute: AppPjCheckerRoute,
   AppReservedLeadsRoute: AppReservedLeadsRoute,
   AppStatementRoute: AppStatementRoute,
   AppTriggersRoute: AppTriggersRoute,
   AppUsersRoute: AppUsersRoute,
+  AppZapCheckerRoute: AppZapCheckerRoute,
   AppIndexRoute: AppIndexRoute,
   AppClaroExampleRoute: AppClaroExampleRoute,
   AppTimExampleRoute: AppTimExampleRoute,
