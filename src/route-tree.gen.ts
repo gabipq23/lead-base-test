@@ -24,6 +24,7 @@ import { Route as AppMy_areaRouteImport } from './routes/app/my_area'
 import { Route as AppMineLeadsRouteImport } from './routes/app/mine-leads'
 import { Route as AppLeadsRouteImport } from './routes/app/leads'
 import { Route as AppEvolutionRouteImport } from './routes/app/evolution'
+import { Route as AppDashboardRouteImport } from './routes/app/dashboard'
 import { Route as AppCompaniesRouteImport } from './routes/app/companies'
 import { Route as AppCheckOperadoraRouteImport } from './routes/app/check-operadora'
 import { Route as AppCheckAnatelRouteImport } from './routes/app/check-anatel'
@@ -117,6 +118,11 @@ const AppLeadsRoute = AppLeadsRouteImport.update({
 const AppEvolutionRoute = AppEvolutionRouteImport.update({
   id: '/evolution',
   path: '/evolution',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppDashboardRoute = AppDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => AppRouteRoute,
 } as any)
 const AppCompaniesRoute = AppCompaniesRouteImport.update({
@@ -226,6 +232,7 @@ export interface FileRoutesByFullPath {
   '/app/check-anatel': typeof AppCheckAnatelRoute
   '/app/check-operadora': typeof AppCheckOperadoraRoute
   '/app/companies': typeof AppCompaniesRoute
+  '/app/dashboard': typeof AppDashboardRoute
   '/app/evolution': typeof AppEvolutionRoute
   '/app/leads': typeof AppLeadsRoute
   '/app/mine-leads': typeof AppMineLeadsRoute
@@ -261,6 +268,7 @@ export interface FileRoutesByTo {
   '/app/check-anatel': typeof AppCheckAnatelRoute
   '/app/check-operadora': typeof AppCheckOperadoraRoute
   '/app/companies': typeof AppCompaniesRoute
+  '/app/dashboard': typeof AppDashboardRoute
   '/app/evolution': typeof AppEvolutionRoute
   '/app/leads': typeof AppLeadsRoute
   '/app/mine-leads': typeof AppMineLeadsRoute
@@ -296,6 +304,7 @@ export interface FileRoutesById {
   '/app/check-anatel': typeof AppCheckAnatelRoute
   '/app/check-operadora': typeof AppCheckOperadoraRoute
   '/app/companies': typeof AppCompaniesRoute
+  '/app/dashboard': typeof AppDashboardRoute
   '/app/evolution': typeof AppEvolutionRoute
   '/app/leads': typeof AppLeadsRoute
   '/app/mine-leads': typeof AppMineLeadsRoute
@@ -334,6 +343,7 @@ export interface FileRouteTypes {
     | '/app/check-anatel'
     | '/app/check-operadora'
     | '/app/companies'
+    | '/app/dashboard'
     | '/app/evolution'
     | '/app/leads'
     | '/app/mine-leads'
@@ -369,6 +379,7 @@ export interface FileRouteTypes {
     | '/app/check-anatel'
     | '/app/check-operadora'
     | '/app/companies'
+    | '/app/dashboard'
     | '/app/evolution'
     | '/app/leads'
     | '/app/mine-leads'
@@ -403,6 +414,7 @@ export interface FileRouteTypes {
     | '/app/check-anatel'
     | '/app/check-operadora'
     | '/app/companies'
+    | '/app/dashboard'
     | '/app/evolution'
     | '/app/leads'
     | '/app/mine-leads'
@@ -541,6 +553,13 @@ declare module '@tanstack/react-router' {
       path: '/evolution'
       fullPath: '/app/evolution'
       preLoaderRoute: typeof AppEvolutionRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/app/dashboard': {
+      id: '/app/dashboard'
+      path: '/dashboard'
+      fullPath: '/app/dashboard'
+      preLoaderRoute: typeof AppDashboardRouteImport
       parentRoute: typeof AppRouteRoute
     }
     '/app/companies': {
@@ -735,6 +754,7 @@ interface AppRouteRouteChildren {
   AppCheckAnatelRoute: typeof AppCheckAnatelRoute
   AppCheckOperadoraRoute: typeof AppCheckOperadoraRoute
   AppCompaniesRoute: typeof AppCompaniesRoute
+  AppDashboardRoute: typeof AppDashboardRoute
   AppEvolutionRoute: typeof AppEvolutionRoute
   AppLeadsRoute: typeof AppLeadsRoute
   AppMineLeadsRoute: typeof AppMineLeadsRoute
@@ -760,6 +780,7 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppCheckAnatelRoute: AppCheckAnatelRoute,
   AppCheckOperadoraRoute: AppCheckOperadoraRoute,
   AppCompaniesRoute: AppCompaniesRoute,
+  AppDashboardRoute: AppDashboardRoute,
   AppEvolutionRoute: AppEvolutionRoute,
   AppLeadsRoute: AppLeadsRoute,
   AppMineLeadsRoute: AppMineLeadsRoute,
