@@ -378,7 +378,7 @@ export function CrmDashboardPage(): JSX.Element {
     ];
 
     return (
-        <div className="flex flex-col gap-5 mt-4">
+        <div className="flex flex-col gap-5 my-4">
             <Typography.Title level={3} >
                 Dashboard CRM
             </Typography.Title>
@@ -491,8 +491,9 @@ export function CrmDashboardPage(): JSX.Element {
                 ))}
             </Row>
 
-            <Row gutter={[16, 16]}>
-                <Col>
+            <Row >
+
+                <Col xl={24}>
                     <Card title="Pedidos por dia" className="shadow-sm">
                         <Column
                             data={dailyVolumeData}
