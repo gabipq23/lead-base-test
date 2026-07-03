@@ -119,7 +119,7 @@ export function LeadViewModal({ lead, open, onClose, updateMutation, currentUser
             open={open}
             onCancel={onClose}
             footer={renderFooter()}
-            width={900}
+            width={1000}
             destroyOnHidden
             title={
                 <div className="flex items-center justify-between gap-2">
