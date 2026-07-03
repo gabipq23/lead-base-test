@@ -20,7 +20,8 @@ export type PermissionResource =
   | "check-anatel"
   | "zap-checker"
   | "base2b-busca-socio"
-  | "base2b-busca-empresa";
+  | "base2b-busca-empresa"
+  | "dashboard";
 
 export type PermissionAction = "view" | "create" | "edit" | "delete";
 
@@ -43,7 +44,8 @@ type RestrictedRoute =
   | "/app/base2b-busca-socio"
   | "/app/base2b-busca-empresa"
   | "/app/check-operadora"
-  | "/app/check-anatel";
+  | "/app/check-anatel"
+  | "/app/dashboard";
 
 const allCrudActions: PermissionAction[] = ["view", "create", "edit", "delete"];
 
@@ -70,6 +72,7 @@ const permissionsByRole: Record<
     "zap-checker": allCrudActions,
     "base2b-busca-socio": allCrudActions,
     "base2b-busca-empresa": allCrudActions,
+    dashboard: allCrudActions,
   },
   GESTOR: {
     users: allCrudActions,
@@ -87,6 +90,7 @@ const permissionsByRole: Record<
     "zap-checker": allCrudActions,
     "base2b-busca-socio": allCrudActions,
     "base2b-busca-empresa": allCrudActions,
+    dashboard: allCrudActions,
   },
   DIRETOR: {
     products: allCrudActions,
@@ -147,6 +151,8 @@ const routeResourceMap: Record<RestrictedRoute, PermissionResource> = {
   "/app/base2b-busca-empresa": "base2b-busca-empresa",
   "/app/check-operadora": "check-operadora",
   "/app/check-anatel": "check-anatel",
+
+  "/app/dashboard": "dashboard",
 };
 
 function resolveRestrictedRoute(path: string): RestrictedRoute | null {
@@ -177,6 +183,8 @@ function resolveRestrictedRoute(path: string): RestrictedRoute | null {
     return "/app/base2b-busca-empresa";
   if (path.startsWith("/app/check-operadora")) return "/app/check-operadora";
   if (path.startsWith("/app/check-anatel")) return "/app/check-anatel";
+
+  if (path.startsWith("/app/dashboard")) return "/app/dashboard";
 
   return null;
 }
