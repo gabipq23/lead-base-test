@@ -1,118 +1,84 @@
 import { appSetting } from "@/constants/app-setting/config.const";
+import type { ILeadCRMManagement } from "@/types/ILead.type";
 import { Button, Checkbox, Col, ConfigProvider, Divider, Form, Input, Row, Select, Typography } from "antd";
 import type { FormInstance } from "antd";
 import { useEffect } from "react";
 
+type ContactHistoryForm = {
+    attempt_number?: string;
+    date?: string;
+    channel?: string;
+    consultant_name?: string;
+    status?: string;
+    note?: string;
+    return?: string;
+    future_return?: boolean;
+    future_return_date?: string;
+};
+
 type ControlFormValues = {
-    consultor?: string;
-    idCRM?: string;
-    idCORP?: string;
-    operadora?: string;
-    team?: string;
-    transbordar_operadora?: string;
-    transbordar_operadora_qual?: string;
-    pedido_operadora_status?: string;
-    pedido_operadora_obs?: string;
-    divida_operadora_status?: string;
-    divida_operadora_faturas?: string;
-    divida_operadora_total?: string;
-    score_serasa_status?: string;
-    score_serasa?: string;
-    score_boa_vista_status?: string;
-    score_boa_vista?: string;
-    analise_credito?: string;
-    antifraude?: string;
-    viabilidade_pap?: string;
-    viabilidade_pap_outros?: string;
-    historico_operadora?: string;
-    historico_operadora_descricao?: string;
-    historico_baixa?: string;
-    historico_baixa_prazos?: Array<"30" | "60" | "90" | "180" | "360">;
-    recadastro?: string;
-    recadastro_documento?: string;
-    recadastro_dados?: string;
-    recadastro_obs?: string;
-    envio_documentos?: string;
-    envio_documentos_quais?: string;
-    biometrics?: string;
-    contract?: string;
-    installation?: string;
-    installation_date?: string;
-    installation_reschedule_date?: string;
-    installation_not_found_date?: string;
-    installation_local_sem_viabilidade_obs?: string;
-    pedido?: string;
-    status_venda?: string;
-    id_operadora?: string;
-    obs?: string;
-    historico_contato?: Array<{
-        datetime?: string;
-        channel?: string;
-        channel_other?: string;
+    crm_management?: {
+        operator_name?: string;
+        transhipment_operator?: boolean;
+        transhipment_operator_name?: string;
+        input_at_operator?: {
+            input?: string;
+            note?: string;
+        };
+        debt_with_operator?: {
+            debt_with_operator?: string;
+            number_of_open_invoices?: string;
+            debt_with_operator_amount?: string;
+        };
+        score_serasa?: string;
+        score_boa_vista?: string;
+        credit_analysis?: string;
+        antifraude?: string;
+        pap_availability?: string;
+        operator_history?: {
+            history?: boolean;
+            description?: string;
+        };
+        lows_history?: {
+            history?: boolean;
+            amout_of_days?: string;
+        };
+        reregistration?: boolean;
+        re_registration_info?: {
+            document?: boolean;
+            data?: unknown;
+            note?: string;
+        };
+        submission_of_documents?: {
+            is_submitted?: boolean;
+            documents?: string[];
+        };
+        biometrics?: string;
+        contract?: string;
+        installation?: {
+            installation?: string;
+            scheduled_date?: string;
+            rescheduled_date?: string;
+            client_not_found_date?: string;
+            notes?: string;
+        };
+        order_status?: string;
+        sales_status?: string;
         consultant_name?: string;
-        status?: string;
-        obs?: string;
-        retorno?: string;
-        retorno_futuro?: string;
-        retorno_futuro_datetime?: string;
-    }>;
+        id_corp?: string;
+        id_operator?: string;
+        id_crm?: string;
+        team?: string;
+        contact_history?: ContactHistoryForm[];
+    };
 };
 
 type ViewingEntity = {
     id: number;
-    responsible_consultant?: string | null;
-    crm_id?: number | string | null;
-    corporate_id?: string | null;
-    operadora?: string | null;
-    operator?: string | null;
-    team?: string | null;
-    transbordar_operadora?: string | null;
-    transhipment?: boolean | null;
-    transbordar_operadora_qual?: string | null;
-    pedido_operadora_status?: string | null;
-    pedido_operadora_obs?: string | null;
-    divida_operadora_status?: string | null;
-    debt_with_operator?: string | null;
-    divida_operadora_faturas?: string | null;
-    divida_operadora_total?: string | null;
-    score_serasa_status?: string | null;
-    score_serasa?: string | null;
-    score_boa_vista_status?: string | null;
-    score_boa_vista?: string | null;
-    analise_credito?: string | null;
-    credit?: string | null;
-    antifraude?: string | null;
-    viabilidade_pap?: string | null;
-    viabilidade_pap_outros?: string | null;
-    historico_operadora?: string | null;
-    historico_operadora_descricao?: string | null;
-    historico_baixa?: string | null;
-    historico_baixa_prazos?: Array<"30" | "60" | "90" | "180" | "360">;
-    recadastro?: string | null;
-    re_registration?: boolean | null;
-    recadastro_documento?: string | null;
-    recadastro_dados?: string | null;
-    recadastro_obs?: string | null;
-    envio_documentos?: string | null;
-    envio_documentos_quais?: string | null;
-    biometrics?: string | null;
-    contract?: string | null;
-    installation?: string | null;
-    installation_date?: string | null;
-    installation_reschedule_date?: string | null;
-    installation_not_found_date?: string | null;
-    installation_local_sem_viabilidade_obs?: string | null;
-    pedido?: string | null;
-    status?: string | null;
-    status_venda?: string | null;
-    id_operadora?: string | null;
-    operator_id?: string | null;
-    obs?: string | null;
-    historico_contato?: ControlFormValues["historico_contato"];
-    contact_history?: ControlFormValues["historico_contato"];
+    crm_management?: ILeadCRMManagement;
 };
 
-const operadoraOptions = [
+const operatorOptions = [
     { value: "tim", label: "TIM" },
     { value: "claro", label: "Claro" },
     { value: "vivo", label: "Vivo" },
@@ -125,12 +91,77 @@ const operadoraOptions = [
     { value: "c6", label: "C6" },
 ];
 
-const yesNoOptions = [
+const operatorInputOptions = [
+    { value: "nao_realizado", label: "Não realizado" },
+    { value: "realizado_com_sucesso", label: "Realizado com sucesso" },
+    { value: "registro_com_pendencias", label: "Registro com pendências" },
+];
+
+const debtOptions = [
+    { value: "sem_registro", label: "Sem registro" },
     { value: "nao", label: "Não" },
     { value: "sim", label: "Sim" },
 ];
 
-const trackingChannelOptions = [
+const scoreOptions = [
+    { value: "sem_registro", label: "Sem registro" },
+    { value: "score", label: "Score" },
+];
+
+const creditAnalysisOptions = [
+    { value: "sem_analise", label: "Sem análise" },
+    { value: "aprovado", label: "Aprovado" },
+    { value: "negado", label: "Negado" },
+    { value: "em_analise", label: "Em análise" },
+];
+
+const antifraudeOptions = [
+    { value: "sem_analise", label: "Sem análise" },
+    { value: "ok", label: "OK" },
+    { value: "reprovado", label: "Reprovado" },
+];
+
+const papAvailabilityOptions = [
+    { value: "viavel", label: "Viável" },
+    { value: "inviavel", label: "Inviável" },
+    { value: "bloqueado", label: "Bloqueado" },
+    { value: "outros", label: "Outros" },
+];
+
+const installationOptions = [
+    { value: "nao_agendado", label: "Não agendado" },
+    { value: "agendado", label: "Agendado" },
+    { value: "reagendado", label: "Reagendado" },
+    { value: "cliente_nao_encontrado", label: "Cliente não encontrado" },
+    { value: "local_sem_viabilidade", label: "Sem viabilidade no local" },
+    { value: "pendente", label: "Pendente" },
+    { value: "cancelado", label: "Cancelado" },
+];
+
+const orderStatusOptions = [
+    { value: "aberto", label: "Aberto" },
+    { value: "fechado", label: "Fechado" },
+    { value: "cancelado", label: "Cancelado" },
+];
+
+const salesStatusOptions = [
+    { value: "venda_realizada", label: "Venda realizada" },
+    { value: "venda_nao_realizada", label: "Venda não realizada" },
+];
+
+const biometricsOptions = [
+    { value: "ok", label: "OK" },
+    { value: "pendente", label: "Pendente" },
+    { value: "cancelado", label: "Cancelado" },
+    { value: "dispensado", label: "Dispensado" },
+];
+
+const contractOptions = [
+    { value: "pendente", label: "Pendente" },
+    { value: "enviado", label: "Enviado" },
+];
+
+const contactChannelOptions = [
     { value: "telefone", label: "Telefone" },
     { value: "whatsapp", label: "WhatsApp" },
     { value: "telegram", label: "Telegram" },
@@ -143,6 +174,30 @@ const trackingChannelOptions = [
     { value: "outro", label: "Outro" },
 ];
 
+const documentOptions = [
+    { value: "cpf", label: "CPF" },
+    { value: "cnpj", label: "CNPJ" },
+    { value: "rg", label: "RG" },
+    { value: "comprovante_endereco", label: "Comprovante de endereço" },
+    { value: "outros", label: "Outros" },
+];
+
+function SectionTitle({ children }: { children: string }) {
+    return <Divider style={{ fontSize: 13, color: "#666" }}>{children}</Divider>;
+}
+
+function FieldLabel({ children }: { children: string }) {
+    return <Typography.Text type="secondary">{children}</Typography.Text>;
+}
+
+function BooleanField({ name, label }: { name: (string | number)[]; label: string }) {
+    return (
+        <Form.Item name={name} valuePropName="checked" noStyle>
+            <Checkbox>{label}</Checkbox>
+        </Form.Item>
+    );
+}
+
 export function OrderControlTab({
     viewingEntity,
     updateMutation,
@@ -153,50 +208,38 @@ export function OrderControlTab({
     form: FormInstance<ControlFormValues>;
 }) {
     useEffect(() => {
-        if (!viewingEntity) return;
+        const crm = viewingEntity.crm_management;
+        if (!crm) return;
+
         form.setFieldsValue({
-            consultor: viewingEntity.responsible_consultant || "",
-            idCRM: viewingEntity.crm_id != null ? String(viewingEntity.crm_id) : "",
-            idCORP: viewingEntity.corporate_id || "",
-            operadora: viewingEntity.operadora ?? viewingEntity.operator ?? undefined,
-            team: viewingEntity.team ?? undefined,
-            transbordar_operadora: viewingEntity.transbordar_operadora ?? (viewingEntity.transhipment ? "sim" : undefined),
-            transbordar_operadora_qual: viewingEntity.transbordar_operadora_qual ?? undefined,
-            pedido_operadora_status: viewingEntity.pedido_operadora_status ?? undefined,
-            pedido_operadora_obs: viewingEntity.pedido_operadora_obs ?? undefined,
-            divida_operadora_status: viewingEntity.divida_operadora_status ?? viewingEntity.debt_with_operator ?? undefined,
-            divida_operadora_faturas: viewingEntity.divida_operadora_faturas ?? undefined,
-            divida_operadora_total: viewingEntity.divida_operadora_total ?? undefined,
-            score_serasa_status: viewingEntity.score_serasa_status ?? undefined,
-            score_serasa: viewingEntity.score_serasa ?? undefined,
-            score_boa_vista_status: viewingEntity.score_boa_vista_status ?? undefined,
-            score_boa_vista: viewingEntity.score_boa_vista ?? undefined,
-            analise_credito: viewingEntity.analise_credito ?? viewingEntity.credit ?? undefined,
-            antifraude: viewingEntity.antifraude ?? undefined,
-            viabilidade_pap: viewingEntity.viabilidade_pap ?? undefined,
-            viabilidade_pap_outros: viewingEntity.viabilidade_pap_outros ?? undefined,
-            historico_operadora: viewingEntity.historico_operadora ?? undefined,
-            historico_operadora_descricao: viewingEntity.historico_operadora_descricao ?? undefined,
-            historico_baixa: viewingEntity.historico_baixa ?? undefined,
-            historico_baixa_prazos: viewingEntity.historico_baixa_prazos ?? [],
-            recadastro: viewingEntity.recadastro ?? (viewingEntity.re_registration ? "sim" : undefined),
-            recadastro_documento: viewingEntity.recadastro_documento ?? undefined,
-            recadastro_dados: viewingEntity.recadastro_dados ?? undefined,
-            recadastro_obs: viewingEntity.recadastro_obs ?? undefined,
-            envio_documentos: viewingEntity.envio_documentos ?? undefined,
-            envio_documentos_quais: viewingEntity.envio_documentos_quais ?? undefined,
-            biometrics: viewingEntity.biometrics ?? undefined,
-            contract: viewingEntity.contract ?? undefined,
-            installation: viewingEntity.installation ?? undefined,
-            installation_date: viewingEntity.installation_date ?? undefined,
-            installation_reschedule_date: viewingEntity.installation_reschedule_date ?? undefined,
-            installation_not_found_date: viewingEntity.installation_not_found_date ?? undefined,
-            installation_local_sem_viabilidade_obs: viewingEntity.installation_local_sem_viabilidade_obs ?? undefined,
-            pedido: viewingEntity.pedido ?? viewingEntity.status ?? undefined,
-            status_venda: viewingEntity.status_venda ?? undefined,
-            id_operadora: viewingEntity.id_operadora ?? viewingEntity.operator_id ?? undefined,
-            obs: viewingEntity.obs ?? undefined,
-            historico_contato: viewingEntity.historico_contato ?? viewingEntity.contact_history ?? [],
+            crm_management: {
+                operator_name: crm.operator_name,
+                transhipment_operator: crm.transhipment_operator,
+                transhipment_operator_name: crm.transhipment_operator_name,
+                input_at_operator: crm.input_at_operator,
+                debt_with_operator: crm.debt_with_operator,
+                score_serasa: crm.score_serasa,
+                score_boa_vista: crm.score_boa_vista,
+                credit_analysis: crm.credit_analysis,
+                antifraude: crm.antifraude,
+                pap_availability: crm.pap_availability,
+                operator_history: crm.operator_history,
+                lows_history: crm.lows_history,
+                reregistration: crm.reregistration,
+                re_registration_info: crm.re_registration_info,
+                submission_of_documents: crm.submission_of_documents,
+                biometrics: crm.biometrics,
+                contract: crm.contract,
+                installation: crm.installation,
+                order_status: crm.order_status,
+                sales_status: crm.sales_status,
+                consultant_name: crm.consultant_name,
+                id_corp: crm.id_corp,
+                id_operator: crm.id_operator,
+                id_crm: crm.id_crm,
+                team: crm.team,
+                contact_history: crm.contact_history ?? [],
+            },
         });
     }, [form, viewingEntity]);
 
@@ -204,52 +247,7 @@ export function OrderControlTab({
         updateMutation.mutate({
             id: viewingEntity.id,
             payload: {
-                responsible_consultant: values.consultor,
-                corporate_id: values.idCORP,
-                crm_id: values.idCRM,
-                operadora: values.operadora,
-                team: values.team,
-                transbordar_operadora: values.transbordar_operadora,
-                transbordar_operadora_qual: values.transbordar_operadora_qual,
-                pedido_operadora_status: values.pedido_operadora_status,
-                pedido_operadora_obs: values.pedido_operadora_obs,
-                divida_operadora_status: values.divida_operadora_status,
-                divida_operadora_faturas: values.divida_operadora_faturas,
-                divida_operadora_total: values.divida_operadora_total,
-                score_serasa_status: values.score_serasa_status,
-                score_serasa: values.score_serasa,
-                score_boa_vista_status: values.score_boa_vista_status,
-                score_boa_vista: values.score_boa_vista,
-                analise_credito: values.analise_credito,
-                antifraude: values.antifraude,
-                viabilidade_pap: values.viabilidade_pap,
-                viabilidade_pap_outros: values.viabilidade_pap_outros,
-                historico_operadora: values.historico_operadora,
-                historico_operadora_descricao: values.historico_operadora_descricao,
-                historico_baixa: values.historico_baixa,
-                historico_baixa_prazos: values.historico_baixa_prazos,
-                recadastro: values.recadastro,
-                recadastro_documento: values.recadastro_documento,
-                recadastro_dados: values.recadastro_dados,
-                recadastro_obs: values.recadastro_obs,
-                envio_documentos: values.envio_documentos,
-                envio_documentos_quais: values.envio_documentos_quais,
-                biometrics: values.biometrics,
-                contract: values.contract,
-                installation: values.installation,
-                installation_date: values.installation_date,
-                installation_reschedule_date: values.installation_reschedule_date,
-                installation_not_found_date: values.installation_not_found_date,
-                installation_local_sem_viabilidade_obs: values.installation_local_sem_viabilidade_obs,
-                pedido: values.pedido,
-                status_venda: values.status_venda,
-                id_operadora: values.id_operadora,
-                obs: values.obs,
-                historico_contato: values.historico_contato,
-                input_crm: values.pedido_operadora_status === "realizado_com_sucesso",
-                availability_crm: values.pedido_operadora_status,
-                debt_with_operator: values.divida_operadora_status,
-                credit: values.analise_credito,
+                crm_management: values.crm_management,
             },
         });
     };
@@ -257,8 +255,8 @@ export function OrderControlTab({
     const color = appSetting.primaryColor;
 
     return (
-        <Form form={form} onFinish={handleFinish}>
-            <div className="max-h-90 overflow-y-auto scrollbar-thin flex flex-col gap-4 ">
+        <Form form={form} onFinish={handleFinish} layout="vertical">
+            <div className="max-h-90 overflow-y-auto scrollbar-thin flex flex-col gap-4">
                 <ConfigProvider
                     theme={{
                         components: {
@@ -267,574 +265,92 @@ export function OrderControlTab({
                         },
                     }}
                 >
-                    <Divider style={{ fontSize: 13, color: "#666" }}>Informações Gerais</Divider>
+                    <SectionTitle>Identificação</SectionTitle>
                     <div className="bg-neutral-100 rounded-sm p-3 w-full">
                         <Row gutter={[16, 16]}>
-                            <Col span={7}>
-                                <span className="flex flex-col gap-1">
-                                    <Typography.Text type="secondary">Consultor</Typography.Text>
-                                    <Form.Item name="consultant_name" noStyle>
-                                        <Input size="small" style={{ width: 220 }} />
-                                    </Form.Item>
-                                </span>
-                            </Col>
-                            <Col span={6}>
-                                <span className="flex flex-col gap-1">
-                                    <Typography.Text type="secondary">ID CORP</Typography.Text>
-                                    <Form.Item name="idCORP" noStyle>
-                                        <Input size="small" style={{ width: 160 }} maxLength={8} />
-                                    </Form.Item>
-                                </span>
-                            </Col>
-                            <Col span={5}>
-                                <span className="flex flex-col gap-1">
-                                    <Typography.Text type="secondary">ID Operadora</Typography.Text>
-                                    <Form.Item name="id_operadora" noStyle>
-                                        <Input size="small" style={{ width: 160 }} />
-                                    </Form.Item>
-                                </span>
-                            </Col>
-                            <Col span={6}>
-                                <span className="flex flex-col gap-1">
-                                    <Typography.Text type="secondary">Equipe</Typography.Text>
-                                    <Form.Item name="team" noStyle>
-                                        <Select showSearch size="small" style={{ width: 200 }} options={[]} />
-                                    </Form.Item>
-                                </span>
-                            </Col>
+                            <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>Nome da operadora</FieldLabel><Form.Item name={["crm_management", "operator_name"]} noStyle><Select showSearch size="small" style={{ width: 220 }} options={operatorOptions} allowClear /></Form.Item></span></Col>
+                            <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>Consultor</FieldLabel><Form.Item name={["crm_management", "consultant_name"]} noStyle><Input size="small" style={{ width: 220 }} /></Form.Item></span></Col>
+                            <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>Equipe</FieldLabel><Form.Item name={["crm_management", "team"]} noStyle><Input size="small" style={{ width: 220 }} /></Form.Item></span></Col>
+                            <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>ID CRM</FieldLabel><Form.Item name={["crm_management", "id_crm"]} noStyle><Input size="small" style={{ width: 180 }} /></Form.Item></span></Col>
+                            <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>ID CORP</FieldLabel><Form.Item name={["crm_management", "id_corp"]} noStyle><Input size="small" style={{ width: 180 }} /></Form.Item></span></Col>
+                            <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>ID Operadora</FieldLabel><Form.Item name={["crm_management", "id_operator"]} noStyle><Input size="small" style={{ width: 180 }} /></Form.Item></span></Col>
                         </Row>
                     </div>
 
-                    <Divider style={{ fontSize: 13, color: "#666" }}>Operadora</Divider>
+                    <SectionTitle>Operadora</SectionTitle>
                     <div className="bg-neutral-100 rounded-sm p-3 w-full">
                         <Row gutter={[16, 16]}>
-                            <Col span={6}>
-                                <span className="flex flex-col gap-1">
-                                    <Typography.Text type="secondary">Transbordar operadora</Typography.Text>
-                                    <Form.Item name="transbordar_operadora" noStyle>
-                                        <Select size="small" style={{ width: 180 }} options={yesNoOptions} allowClear />
-                                    </Form.Item>
-                                </span>
-                            </Col>
-                            <Col span={6}>
-                                <span className="flex flex-col gap-1">
-                                    <Typography.Text type="secondary">Qual operadora</Typography.Text>
-                                    <Form.Item name="transbordar_operadora_qual" noStyle>
-                                        <Select showSearch allowClear size="small" style={{ width: 200 }} options={operadoraOptions} />
-                                    </Form.Item>
-                                </span>
-                            </Col>
-                            <Col span={6}>
-                                <span className="flex flex-col gap-1">
-                                    <Typography.Text type="secondary">Pedido na operadora</Typography.Text>
-                                    <Form.Item name="pedido_operadora_status" noStyle>
-                                        <Select
-                                            size="small"
-                                            style={{ width: 220 }}
-                                            allowClear
-                                            options={[
-                                                { value: "nao_realizado", label: "Não realizado" },
-                                                { value: "realizado_com_sucesso", label: "Realizado com sucesso" },
-                                                { value: "registro_com_pendencias", label: "Registro com pendências" },
-                                            ]}
-                                        />
-                                    </Form.Item>
-                                </span>
-                            </Col>
-                            <Col span={6}>
-                                <span className="flex flex-col gap-1">
-                                    <Typography.Text type="secondary">Obs. pedido</Typography.Text>
-                                    <Form.Item name="pedido_operadora_obs" noStyle>
-                                        <Input.TextArea rows={1} style={{ width: 220 }} />
-                                    </Form.Item>
-                                </span>
-                            </Col>
-                            <Col span={6}>
-                                <span className="flex flex-col gap-1">
-                                    <Typography.Text type="secondary">Dívida operadora</Typography.Text>
-                                    <Form.Item name="divida_operadora_status" noStyle>
-                                        <Select
-                                            size="small"
-                                            style={{ width: 180 }}
-                                            allowClear
-                                            options={[
-                                                { value: "sem_registro", label: "Sem registro" },
-                                                { value: "nao", label: "Não" },
-                                                { value: "sim", label: "Sim" },
-                                            ]}
-                                        />
-                                    </Form.Item>
-                                </span>
-                            </Col>
-                            <Col span={6}>
-                                <span className="flex flex-col gap-1">
-                                    <Typography.Text type="secondary">Nº de faturas</Typography.Text>
-                                    <Form.Item name="divida_operadora_faturas" noStyle>
-                                        <Input size="small" type="number" style={{ width: 180 }} />
-                                    </Form.Item>
-                                </span>
-                            </Col>
-                            <Col span={6}>
-                                <span className="flex flex-col gap-1">
-                                    <Typography.Text type="secondary">Total da dívida</Typography.Text>
-                                    <Form.Item name="divida_operadora_total" noStyle>
-                                        <Input size="small" style={{ width: 180 }} />
-                                    </Form.Item>
-                                </span>
-                            </Col>
-                            <Col span={6}>
-                                <span className="flex flex-col gap-1">
-                                    <Typography.Text type="secondary">Score SERASA</Typography.Text>
-                                    <Form.Item name="score_serasa_status" noStyle>
-                                        <Select
-                                            size="small"
-                                            style={{ width: 180 }}
-                                            allowClear
-                                            options={[
-                                                { value: "sem_registro", label: "Sem registro" },
-                                                { value: "score", label: "Score" },
-                                            ]}
-                                        />
-                                    </Form.Item>
-                                </span>
-                            </Col>
-                            <Col span={6}>
-                                <span className="flex flex-col gap-1">
-                                    <Typography.Text type="secondary">Score SERASA</Typography.Text>
-                                    <Form.Item name="score_serasa" noStyle>
-                                        <Input size="small" type="number" style={{ width: 180 }} />
-                                    </Form.Item>
-                                </span>
-                            </Col>
-                            <Col span={6}>
-                                <span className="flex flex-col gap-1">
-                                    <Typography.Text type="secondary">Score Boa Vista</Typography.Text>
-                                    <Form.Item name="score_boa_vista_status" noStyle>
-                                        <Select
-                                            size="small"
-                                            style={{ width: 180 }}
-                                            allowClear
-                                            options={[
-                                                { value: "sem_registro", label: "Sem registro" },
-                                                { value: "score", label: "Score" },
-                                            ]}
-                                        />
-                                    </Form.Item>
-                                </span>
-                            </Col>
-                            <Col span={6}>
-                                <span className="flex flex-col gap-1">
-                                    <Typography.Text type="secondary">Score Boa Vista</Typography.Text>
-                                    <Form.Item name="score_boa_vista" noStyle>
-                                        <Input size="small" type="number" style={{ width: 180 }} />
-                                    </Form.Item>
-                                </span>
-                            </Col>
+                            <Col span={6}><BooleanField name={["crm_management", "transhipment_operator"]} label="Transbordo na operadora" /></Col>
+                            <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>Nome da operadora de transbordo</FieldLabel><Form.Item name={["crm_management", "transhipment_operator_name"]} noStyle><Select showSearch allowClear size="small" style={{ width: 260 }} options={operatorOptions} /></Form.Item></span></Col>
+                            <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Input na operadora</FieldLabel><Form.Item name={["crm_management", "input_at_operator", "input"]} noStyle><Select size="small" style={{ width: 220 }} allowClear options={operatorInputOptions} /></Form.Item></span></Col>
+                            <Col span={12}><span className="flex flex-col gap-1"><FieldLabel>Observação do input</FieldLabel><Form.Item name={["crm_management", "input_at_operator", "note"]} noStyle><Input.TextArea rows={1} style={{ width: 320 }} /></Form.Item></span></Col>
+                            <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>Dívida com a operadora</FieldLabel><Form.Item name={["crm_management", "debt_with_operator", "debt_with_operator"]} noStyle><Select size="small" style={{ width: 220 }} allowClear options={debtOptions} /></Form.Item></span></Col>
+                            <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>Faturas em aberto</FieldLabel><Form.Item name={["crm_management", "debt_with_operator", "number_of_open_invoices"]} noStyle><Input size="small" type="number" style={{ width: 180 }} /></Form.Item></span></Col>
+                            <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>Valor total da dívida</FieldLabel><Form.Item name={["crm_management", "debt_with_operator", "debt_with_operator_amount"]} noStyle><Input size="small" style={{ width: 220 }} /></Form.Item></span></Col>
+                            <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Score SERASA</FieldLabel><Form.Item name={["crm_management", "score_serasa"]} noStyle><Select size="small" style={{ width: 180 }} allowClear options={scoreOptions} /></Form.Item></span></Col>
+                            <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Score Boa Vista</FieldLabel><Form.Item name={["crm_management", "score_boa_vista"]} noStyle><Select size="small" style={{ width: 180 }} allowClear options={scoreOptions} /></Form.Item></span></Col>
                         </Row>
                     </div>
 
-                    <Divider style={{ fontSize: 13, color: "#666" }}>Análise e Cadastro</Divider>
+                    <SectionTitle>Análise de Crédito</SectionTitle>
                     <div className="bg-neutral-100 rounded-sm p-3 w-full">
                         <Row gutter={[16, 16]}>
-                            <Col span={6}>
-                                <span className="flex flex-col gap-1">
-                                    <Typography.Text type="secondary">Análise de crédito</Typography.Text>
-                                    <Form.Item name="analise_credito" noStyle>
-                                        <Select
-                                            size="small"
-                                            style={{ width: 180 }}
-                                            allowClear
-                                            options={[
-                                                { value: "sem_analise", label: "Sem análise" },
-                                                { value: "aprovado", label: "Aprovado" },
-                                                { value: "negado", label: "Negado" },
-                                                { value: "em_analise", label: "Em análise" },
-                                            ]}
-                                        />
-                                    </Form.Item>
-                                </span>
-                            </Col>
-                            <Col span={6}>
-                                <span className="flex flex-col gap-1">
-                                    <Typography.Text type="secondary">Antifraude</Typography.Text>
-                                    <Form.Item name="antifraude" noStyle>
-                                        <Select
-                                            size="small"
-                                            style={{ width: 180 }}
-                                            allowClear
-                                            options={[
-                                                { value: "sem_analise", label: "Sem análise" },
-                                                { value: "ok", label: "OK" },
-                                                { value: "reprovado", label: "Reprovado" },
-                                            ]}
-                                        />
-                                    </Form.Item>
-                                </span>
-                            </Col>
-                            <Col span={6}>
-                                <span className="flex flex-col gap-1">
-                                    <Typography.Text type="secondary">Viabilidade PAP</Typography.Text>
-                                    <Form.Item name="viabilidade_pap" noStyle>
-                                        <Select
-                                            size="small"
-                                            style={{ width: 180 }}
-                                            allowClear
-                                            options={[
-                                                { value: "viavel", label: "Viável" },
-                                                { value: "inviavel", label: "Inviável" },
-                                                { value: "bloqueado", label: "Bloqueado" },
-                                                { value: "outros", label: "Outros" },
-                                            ]}
-                                        />
-                                    </Form.Item>
-                                </span>
-                            </Col>
-                            <Col span={6}>
-                                <span className="flex flex-col gap-1">
-                                    <Typography.Text type="secondary">Detalhe PAP</Typography.Text>
-                                    <Form.Item name="viabilidade_pap_outros" noStyle>
-                                        <Input size="small" style={{ width: 220 }} />
-                                    </Form.Item>
-                                </span>
-                            </Col>
-                            <Col span={6}>
-                                <span className="flex flex-col gap-1">
-                                    <Typography.Text type="secondary">Histórico na operadora</Typography.Text>
-                                    <Form.Item name="historico_operadora" noStyle>
-                                        <Select size="small" style={{ width: 180 }} options={yesNoOptions} allowClear />
-                                    </Form.Item>
-                                </span>
-                            </Col>
-                            <Col span={8}>
-                                <span className="flex flex-col gap-1">
-                                    <Typography.Text type="secondary">Descrição do histórico</Typography.Text>
-                                    <Form.Item name="historico_operadora_descricao" noStyle>
-                                        <Input.TextArea rows={1} style={{ width: 260 }} />
-                                    </Form.Item>
-                                </span>
-                            </Col>
-                            <Col span={6}>
-                                <span className="flex flex-col gap-1">
-                                    <Typography.Text type="secondary">Histórico de baixa</Typography.Text>
-                                    <Form.Item name="historico_baixa" noStyle>
-                                        <Select size="small" style={{ width: 180 }} options={yesNoOptions} allowClear />
-                                    </Form.Item>
-                                </span>
-                            </Col>
-                            <Col span={12}>
-                                <span className="flex flex-col gap-1">
-                                    <Typography.Text type="secondary">Períodos</Typography.Text>
-                                    <Form.Item name="historico_baixa_prazos" noStyle>
-                                        <Checkbox.Group
-                                            options={[
-                                                { value: "30", label: "30 dias" },
-                                                { value: "60", label: "60 dias" },
-                                                { value: "90", label: "90 dias" },
-                                                { value: "180", label: "180 dias" },
-                                                { value: "360", label: "360 dias" },
-                                            ]}
-                                        />
-                                    </Form.Item>
-                                </span>
-                            </Col>
-                            <Col span={6}>
-                                <span className="flex flex-col gap-1">
-                                    <Typography.Text type="secondary">Recadastro</Typography.Text>
-                                    <Form.Item name="recadastro" noStyle>
-                                        <Select size="small" style={{ width: 160 }} options={yesNoOptions} allowClear />
-                                    </Form.Item>
-                                </span>
-                            </Col>
-                            <Col span={6}>
-                                <span className="flex flex-col gap-1">
-                                    <Typography.Text type="secondary">CPF/CNPJ</Typography.Text>
-                                    <Form.Item name="recadastro_documento" noStyle>
-                                        <Input size="small" style={{ width: 180 }} />
-                                    </Form.Item>
-                                </span>
-                            </Col>
-                            <Col span={8}>
-                                <span className="flex flex-col gap-1">
-                                    <Typography.Text type="secondary">Dados do recadastro</Typography.Text>
-                                    <Form.Item name="recadastro_dados" noStyle>
-                                        <Input.TextArea rows={1} style={{ width: 260 }} />
-                                    </Form.Item>
-                                </span>
-                            </Col>
-                            <Col span={8}>
-                                <span className="flex flex-col gap-1">
-                                    <Typography.Text type="secondary">Obs. recadastro</Typography.Text>
-                                    <Form.Item name="recadastro_obs" noStyle>
-                                        <Input.TextArea rows={1} style={{ width: 260 }} />
-                                    </Form.Item>
-                                </span>
-                            </Col>
-                            <Col span={6}>
-                                <span className="flex flex-col gap-1">
-                                    <Typography.Text type="secondary">Envio de documentos</Typography.Text>
-                                    <Form.Item name="envio_documentos" noStyle>
-                                        <Select
-                                            size="small"
-                                            style={{ width: 180 }}
-                                            allowClear
-                                            options={[
-                                                { value: "ok", label: "OK" },
-                                                { value: "pendente", label: "Pendente" },
-                                            ]}
-                                        />
-                                    </Form.Item>
-                                </span>
-                            </Col>
-                            <Col span={14}>
-                                <span className="flex flex-col gap-1">
-                                    <Typography.Text type="secondary">Quais documentos</Typography.Text>
-                                    <Form.Item name="envio_documentos_quais" noStyle>
-                                        <Input.TextArea rows={1} style={{ width: 320 }} />
-                                    </Form.Item>
-                                </span>
-                            </Col>
+                            <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Análise de crédito</FieldLabel><Form.Item name={["crm_management", "credit_analysis"]} noStyle><Select size="small" style={{ width: 200 }} allowClear options={creditAnalysisOptions} /></Form.Item></span></Col>
+                            <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Antifraude</FieldLabel><Form.Item name={["crm_management", "antifraude"]} noStyle><Select size="small" style={{ width: 200 }} allowClear options={antifraudeOptions} /></Form.Item></span></Col>
+                            <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Disponibilidade PAP</FieldLabel><Form.Item name={["crm_management", "pap_availability"]} noStyle><Select size="small" style={{ width: 200 }} allowClear options={papAvailabilityOptions} /></Form.Item></span></Col>
+                            <Col span={8}><BooleanField name={["crm_management", "operator_history", "history"]} label="Histórico na operadora" /></Col>
+                            <Col span={12}><span className="flex flex-col gap-1"><FieldLabel>Descrição do histórico</FieldLabel><Form.Item name={["crm_management", "operator_history", "description"]} noStyle><Input.TextArea rows={1} style={{ width: 320 }} /></Form.Item></span></Col>
+                            <Col span={8}><BooleanField name={["crm_management", "lows_history", "history"]} label="Histórico de baixas" /></Col>
+                            <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>Quantidade de dias</FieldLabel><Form.Item name={["crm_management", "lows_history", "amout_of_days"]} noStyle><Select size="small" style={{ width: 180 }} allowClear options={[{ value: "30", label: "30 dias" }, { value: "60", label: "60 dias" }, { value: "90", label: "90 dias" }, { value: "180", label: "180 dias" }, { value: "360", label: "360 dias" }]} /></Form.Item></span></Col>
                         </Row>
                     </div>
 
-                    <Divider style={{ fontSize: 13, color: "#666" }}>CRM, Contrato e Instalação</Divider>
+                    <SectionTitle>Recadastro e Documentos</SectionTitle>
                     <div className="bg-neutral-100 rounded-sm p-3 w-full">
                         <Row gutter={[16, 16]}>
-                            <Col span={6}>
-                                <span className="flex flex-col gap-1">
-                                    <Typography.Text type="secondary">ID CRM</Typography.Text>
-                                    <Form.Item name="idCRM" noStyle>
-                                        <Input size="small" style={{ width: 160 }} maxLength={8} />
-                                    </Form.Item>
-                                </span>
-                            </Col>
-                            <Col span={6}>
-                                <span className="flex flex-col gap-1">
-                                    <Typography.Text type="secondary">Biometria</Typography.Text>
-                                    <Form.Item name="biometrics" noStyle>
-                                        <Select
-                                            size="small"
-                                            style={{ width: 180 }}
-                                            allowClear
-                                            options={[
-                                                { value: "ok", label: "OK" },
-                                                { value: "pendente", label: "Pendente" },
-                                                { value: "cancelado", label: "Cancelado" },
-                                                { value: "dispensado", label: "Dispensado" },
-                                            ]}
-                                        />
-                                    </Form.Item>
-                                </span>
-                            </Col>
-                            <Col span={6}>
-                                <span className="flex flex-col gap-1">
-                                    <Typography.Text type="secondary">Contrato</Typography.Text>
-                                    <Form.Item name="contract" noStyle>
-                                        <Select
-                                            size="small"
-                                            style={{ width: 180 }}
-                                            options={[
-                                                { value: "pendente", label: "Pendente" },
-                                                { value: "enviado", label: "Enviado" },
-                                            ]}
-                                        />
-                                    </Form.Item>
-                                </span>
-                            </Col>
-                            <Col span={6}>
-                                <span className="flex flex-col gap-1">
-                                    <Typography.Text type="secondary">Pedido</Typography.Text>
-                                    <Form.Item name="pedido" noStyle>
-                                        <Select
-                                            size="small"
-                                            style={{ width: 180 }}
-                                            options={[
-                                                { value: "aberto", label: "Aberto" },
-                                                { value: "fechado", label: "Fechado" },
-                                                { value: "cancelado", label: "Cancelado" },
-                                            ]}
-                                        />
-                                    </Form.Item>
-                                </span>
-                            </Col>
-                            <Col span={6}>
-                                <span className="flex flex-col gap-1">
-                                    <Typography.Text type="secondary">Status venda</Typography.Text>
-                                    <Form.Item name="status_venda" noStyle>
-                                        <Select
-                                            size="small"
-                                            style={{ width: 220 }}
-                                            options={[
-                                                { value: "venda_realizada", label: "Venda realizada" },
-                                                { value: "venda_nao_realizada", label: "Venda não realizada" },
-                                            ]}
-                                        />
-                                    </Form.Item>
-                                </span>
-                            </Col>
-                            <Col span={6}>
-                                <span className="flex flex-col gap-1">
-                                    <Typography.Text type="secondary">Instalação</Typography.Text>
-                                    <Form.Item name="installation" noStyle>
-                                        <Select
-                                            size="small"
-                                            style={{ width: 220 }}
-                                            allowClear
-                                            options={[
-                                                { value: "nao_agendado", label: "Não agendado" },
-                                                { value: "agendado", label: "Agendado" },
-                                                { value: "reagendado", label: "Reagendado" },
-                                                { value: "cliente_nao_encontrado", label: "Cliente não encontrado" },
-                                                { value: "local_sem_viabilidade", label: "Local sem viabilidade" },
-                                                { value: "pendente", label: "Pendente" },
-                                                { value: "cancelado", label: "Cancelado" },
-                                            ]}
-                                        />
-                                    </Form.Item>
-                                </span>
-                            </Col>
-                            <Col span={6}>
-                                <span className="flex flex-col gap-1">
-                                    <Typography.Text type="secondary">Data agendada</Typography.Text>
-                                    <Form.Item name="installation_date" noStyle>
-                                        <Input size="small" type="datetime-local" style={{ width: 220 }} />
-                                    </Form.Item>
-                                </span>
-                            </Col>
-                            <Col span={6}>
-                                <span className="flex flex-col gap-1">
-                                    <Typography.Text type="secondary">Data reagendada</Typography.Text>
-                                    <Form.Item name="installation_reschedule_date" noStyle>
-                                        <Input size="small" type="datetime-local" style={{ width: 220 }} />
-                                    </Form.Item>
-                                </span>
-                            </Col>
-                            <Col span={6}>
-                                <span className="flex flex-col gap-1">
-                                    <Typography.Text type="secondary">Cliente não encontrado</Typography.Text>
-                                    <Form.Item name="installation_not_found_date" noStyle>
-                                        <Input size="small" type="datetime-local" style={{ width: 220 }} />
-                                    </Form.Item>
-                                </span>
-                            </Col>
-                            <Col span={8}>
-                                <span className="flex flex-col gap-1">
-                                    <Typography.Text type="secondary">Obs. local sem viabilidade</Typography.Text>
-                                    <Form.Item name="installation_local_sem_viabilidade_obs" noStyle>
-                                        <Input.TextArea rows={1} style={{ width: 260 }} />
-                                    </Form.Item>
-                                </span>
-                            </Col>
+                            <Col span={6}><BooleanField name={["crm_management", "reregistration"]} label="Possui recadastro" /></Col>
+                            <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Documento</FieldLabel><Form.Item name={["crm_management", "re_registration_info", "document"]} valuePropName="checked" noStyle><Checkbox>CPF/CNPJ</Checkbox></Form.Item></span></Col>
+                            <Col span={12}><span className="flex flex-col gap-1"><FieldLabel>Dados do recadastro</FieldLabel><Typography.Text type="secondary" className="text-xs">Campo reservado para a estrutura livre do recadastro. Será tratado em um layout próprio.</Typography.Text></span></Col>
+                            <Col span={12}><span className="flex flex-col gap-1"><FieldLabel>Observação do recadastro</FieldLabel><Form.Item name={["crm_management", "re_registration_info", "note"]} noStyle><Input.TextArea rows={1} style={{ width: 360 }} /></Form.Item></span></Col>
+                            <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Envio de documentos</FieldLabel><Form.Item name={["crm_management", "submission_of_documents", "is_submitted"]} valuePropName="checked" noStyle><Checkbox>Documentos enviados</Checkbox></Form.Item></span></Col>
+                            <Col span={18}><span className="flex flex-col gap-1"><FieldLabel>Quais documentos</FieldLabel><Form.Item name={["crm_management", "submission_of_documents", "documents"]} noStyle><Checkbox.Group options={documentOptions} /></Form.Item></span></Col>
                         </Row>
                     </div>
 
-                    <Divider style={{ fontSize: 13, color: "#666" }}>Histórico de Contato</Divider>
+                    <SectionTitle>Contrato e Instalação</SectionTitle>
                     <div className="bg-neutral-100 rounded-sm p-3 w-full">
-                        <Form.List name="historico_contato">
+                        <Row gutter={[16, 16]}>
+                            <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Biometria</FieldLabel><Form.Item name={["crm_management", "biometrics"]} noStyle><Select size="small" style={{ width: 180 }} allowClear options={biometricsOptions} /></Form.Item></span></Col>
+                            <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Contrato</FieldLabel><Form.Item name={["crm_management", "contract"]} noStyle><Select size="small" style={{ width: 180 }} allowClear options={contractOptions} /></Form.Item></span></Col>
+                            <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Status do pedido</FieldLabel><Form.Item name={["crm_management", "order_status"]} noStyle><Select size="small" style={{ width: 180 }} allowClear options={orderStatusOptions} /></Form.Item></span></Col>
+                            <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Status de vendas</FieldLabel><Form.Item name={["crm_management", "sales_status"]} noStyle><Select size="small" style={{ width: 220 }} allowClear options={salesStatusOptions} /></Form.Item></span></Col>
+                            <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Instalação</FieldLabel><Form.Item name={["crm_management", "installation", "installation"]} noStyle><Select size="small" style={{ width: 240 }} allowClear options={installationOptions} /></Form.Item></span></Col>
+                            <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Data agendada</FieldLabel><Form.Item name={["crm_management", "installation", "scheduled_date"]} noStyle><Input size="small" type="datetime-local" style={{ width: 220 }} /></Form.Item></span></Col>
+                            <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Data reagendada</FieldLabel><Form.Item name={["crm_management", "installation", "rescheduled_date"]} noStyle><Input size="small" type="datetime-local" style={{ width: 220 }} /></Form.Item></span></Col>
+                            <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Cliente não encontrado</FieldLabel><Form.Item name={["crm_management", "installation", "client_not_found_date"]} noStyle><Input size="small" type="datetime-local" style={{ width: 220 }} /></Form.Item></span></Col>
+                            <Col span={12}><span className="flex flex-col gap-1"><FieldLabel>Observações da instalação</FieldLabel><Form.Item name={["crm_management", "installation", "notes"]} noStyle><Input.TextArea rows={1} style={{ width: 360 }} /></Form.Item></span></Col>
+                        </Row>
+                    </div>
+
+                    <SectionTitle>Histórico de Contato</SectionTitle>
+                    <div className="bg-neutral-100 rounded-sm p-3 w-full">
+                        <Form.List name={["crm_management", "contact_history"]}>
                             {(fields, { add, remove }) => (
                                 <div className="flex flex-col gap-3">
-                                    <div>
-                                        <Button type="dashed" onClick={() => add()}>
-                                            Adicionar tentativa
-                                        </Button>
-                                    </div>
+                                    <div><Button type="dashed" onClick={() => add({})}>Adicionar tentativa</Button></div>
                                     {fields.map((field, index) => (
                                         <div key={field.key} className="rounded border border-neutral-200 bg-white p-3">
                                             <Row gutter={[16, 16]}>
-                                                <Col span={6}>
-                                                    <span className="flex flex-col gap-1">
-                                                        <Typography.Text type="secondary">Tentativa {index + 1}</Typography.Text>
-                                                        <Form.Item name={[field.name, "datetime"]} noStyle>
-                                                            <Input size="small" type="datetime-local" style={{ width: 220 }} />
-                                                        </Form.Item>
-                                                    </span>
-                                                </Col>
-                                                <Col span={6}>
-                                                    <span className="flex flex-col gap-1">
-                                                        <Typography.Text type="secondary">Canal de atendimento</Typography.Text>
-                                                        <Form.Item name={[field.name, "channel"]} noStyle>
-                                                            <Select size="small" style={{ width: 220 }} options={trackingChannelOptions} allowClear />
-                                                        </Form.Item>
-                                                    </span>
-                                                </Col>
-                                                <Col span={6}>
-                                                    <span className="flex flex-col gap-1">
-                                                        <Typography.Text type="secondary">Outro canal</Typography.Text>
-                                                        <Form.Item name={[field.name, "channel_other"]} noStyle>
-                                                            <Input size="small" style={{ width: 220 }} />
-                                                        </Form.Item>
-                                                    </span>
-                                                </Col>
-                                                <Col span={6}>
-                                                    <span className="flex flex-col gap-1">
-                                                        <Typography.Text type="secondary">Nome consultor</Typography.Text>
-                                                        <Form.Item name={[field.name, "consultant_name"]} noStyle>
-                                                            <Input size="small" style={{ width: 220 }} />
-                                                        </Form.Item>
-                                                    </span>
-                                                </Col>
-                                                <Col span={6}>
-                                                    <span className="flex flex-col gap-1">
-                                                        <Typography.Text type="secondary">Status</Typography.Text>
-                                                        <Form.Item name={[field.name, "status"]} noStyle>
-                                                            <Select
-                                                                size="small"
-                                                                style={{ width: 180 }}
-                                                                options={[
-                                                                    { value: "atendido", label: "Atendido" },
-                                                                    { value: "nao_atendido", label: "Não atendido" },
-                                                                    { value: "sem_resposta", label: "Sem resposta" },
-                                                                ]}
-                                                                allowClear
-                                                            />
-                                                        </Form.Item>
-                                                    </span>
-                                                </Col>
-                                                <Col span={8}>
-                                                    <span className="flex flex-col gap-1">
-                                                        <Typography.Text type="secondary">OBS</Typography.Text>
-                                                        <Form.Item name={[field.name, "obs"]} noStyle>
-                                                            <Input.TextArea rows={1} style={{ width: 260 }} />
-                                                        </Form.Item>
-                                                    </span>
-                                                </Col>
-                                                <Col span={6}>
-                                                    <span className="flex flex-col gap-1">
-                                                        <Typography.Text type="secondary">Retorno</Typography.Text>
-                                                        <Form.Item name={[field.name, "retorno"]} noStyle>
-                                                            <Select
-                                                                size="small"
-                                                                style={{ width: 180 }}
-                                                                options={[
-                                                                    { value: "positivo", label: "Positivo" },
-                                                                    { value: "negativo", label: "Negativo" },
-                                                                    { value: "neutro", label: "Neutro" },
-                                                                ]}
-                                                                allowClear
-                                                            />
-                                                        </Form.Item>
-                                                    </span>
-                                                </Col>
-                                                <Col span={6}>
-                                                    <span className="flex flex-col gap-1">
-                                                        <Typography.Text type="secondary">Retorno futuro</Typography.Text>
-                                                        <Form.Item name={[field.name, "retorno_futuro"]} noStyle>
-                                                            <Select size="small" style={{ width: 160 }} options={yesNoOptions} allowClear />
-                                                        </Form.Item>
-                                                    </span>
-                                                </Col>
-                                                <Col span={6}>
-                                                    <span className="flex flex-col gap-1">
-                                                        <Typography.Text type="secondary">Data/hora retorno</Typography.Text>
-                                                        <Form.Item name={[field.name, "retorno_futuro_datetime"]} noStyle>
-                                                            <Input size="small" type="datetime-local" style={{ width: 220 }} />
-                                                        </Form.Item>
-                                                    </span>
-                                                </Col>
-                                                <Col span={24}>
-                                                    <Button danger type="link" onClick={() => remove(field.name)}>
-                                                        Remover tentativa
-                                                    </Button>
-                                                </Col>
+                                                <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Tentativa {index + 1}</FieldLabel><Form.Item name={[field.name, "attempt_number"]} noStyle><Input size="small" style={{ width: 180 }} /></Form.Item></span></Col>
+                                                <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Data</FieldLabel><Form.Item name={[field.name, "date"]} noStyle><Input size="small" type="datetime-local" style={{ width: 220 }} /></Form.Item></span></Col>
+                                                <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Canal de atendimento</FieldLabel><Form.Item name={[field.name, "channel"]} noStyle><Select size="small" style={{ width: 220 }} options={contactChannelOptions} allowClear /></Form.Item></span></Col>
+                                                <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Nome do consultor</FieldLabel><Form.Item name={[field.name, "consultant_name"]} noStyle><Input size="small" style={{ width: 220 }} /></Form.Item></span></Col>
+                                                <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Status</FieldLabel><Form.Item name={[field.name, "status"]} noStyle><Select size="small" style={{ width: 180 }} allowClear options={[{ value: "atendido", label: "Atendido" }, { value: "nao_atendido", label: "Não atendido" }, { value: "sem_resposta", label: "Sem resposta" }]} /></Form.Item></span></Col>
+                                                <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>Observação</FieldLabel><Form.Item name={[field.name, "note"]} noStyle><Input.TextArea rows={1} style={{ width: 260 }} /></Form.Item></span></Col>
+                                                <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Retorno</FieldLabel><Form.Item name={[field.name, "return"]} noStyle><Select size="small" style={{ width: 180 }} allowClear options={[{ value: "positivo", label: "Positivo" }, { value: "negativo", label: "Negativo" }, { value: "neutro", label: "Neutro" }]} /></Form.Item></span></Col>
+                                                <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Retorno futuro</FieldLabel><Form.Item name={[field.name, "future_return"]} valuePropName="checked" noStyle><Checkbox>Sim</Checkbox></Form.Item></span></Col>
+                                                <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Data do retorno futuro</FieldLabel><Form.Item name={[field.name, "future_return_date"]} noStyle><Input size="small" type="datetime-local" style={{ width: 220 }} /></Form.Item></span></Col>
+                                                <Col span={24}><Button danger type="link" onClick={() => remove(field.name)}>Remover tentativa</Button></Col>
                                             </Row>
                                         </div>
                                     ))}
@@ -842,9 +358,6 @@ export function OrderControlTab({
                             )}
                         </Form.List>
                     </div>
-
-
-
                 </ConfigProvider>
             </div>
         </Form>
