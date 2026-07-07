@@ -3,7 +3,7 @@ import { Button, message, Tag, Tooltip, type TableColumnsType } from "antd";
 import { CheckCircle2, MapIcon, MapPinned, Mars, Venus, XCircle } from "lucide-react";
 
 import type { ILead } from "@/types/ILead.type";
-import { formatCEP, formatCPF } from "@/utils/document.util";
+import { formatCEP, formatCPF, formatRG } from "@/utils/document.util";
 import { formatPhoneNumber } from "@/utils/number.utils";
 import { getPersonData } from "@/pages/orders/common/components/columns";
 import { normalizeNames } from "@/utils/orders.util";
@@ -314,29 +314,26 @@ export function getColumnsReservedLeads(options: GetColumnsOptions): TableColumn
             },
         },
         {
+            key: "rg",
+            title: "RG",
+            dataIndex: "rg",
+            width: 150,
+            render: (rg) => {
+                return renderCopyableText(formatRG(rg?.rg));
+            },
+        },
+        {
             key: "cpf",
             title: "CPF",
             dataIndex: "cpf",
             width: 150,
             render: (cpf: string) => {
-                if (!cpf) {
-                    return (
-                        <span
-                            style={{
-                                display: "inline-block",
-                                width: 110,
-                                height: 16,
-                                borderRadius: 4,
-                                background: "#d9d9d9",
-                                filter: "blur(4px)",
-                            }}
-                        />
-                    );
-                }
+
 
                 return renderCopyableText(formatCPF(cpf));
             },
-        }, {
+        },
+        {
             key: "mother_name",
             title: "Nome da mãe",
             dataIndex: "mother_name",

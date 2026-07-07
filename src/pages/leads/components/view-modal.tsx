@@ -1,12 +1,13 @@
-import { Button, Form, Modal, Tabs, Tag } from "antd";
+import { Button, ConfigProvider, Form, Modal, Select, Tabs } from "antd";
 
 import type { IAuthPayload } from "@/types/IAuthPayload.type";
 import type { ILead } from "@/types/ILead.type";
-import { getStatusColor } from "./columns";
+// import { getStatusColor } from "./columns";
 import { LeadDetailsTab } from "./details-tab";
 import { useEffect, useState } from "react";
 import { OrderControlTab } from "./control-tab";
 import { OrderNotesTab } from "./notes-tb";
+import { appSetting } from "@/constants/app-setting/config.const";
 
 type LeadNote = {
     obs: string;
@@ -114,6 +115,12 @@ export function LeadViewModal({ lead, open, onClose, updateMutation, currentUser
                 return null;
         }
     };
+    const color = appSetting.primaryColor;
+    const after_sales_status_enum = [
+        "Venda realizada",
+        "Venda não realizada",
+
+    ];
     return (
         <Modal
             open={open}
@@ -122,10 +129,48 @@ export function LeadViewModal({ lead, open, onClose, updateMutation, currentUser
             width={1000}
             destroyOnHidden
             title={
-                <div className="flex items-center justify-between gap-2">
+                <div className="flex flex-col md:flex-row lg:flex-row gap-4 mg:items-start lg:items-start justify-between">
                     <span>Lead: {viewingLead?.full_name || `Lead #${viewingLead?.id}`}</span>
-                    <span className="mr-5"> <Tag color={getStatusColor(viewingLead?.status ?? "")}>{viewingLead?.status}</Tag></span>
+                    <div className="flex flex-col flex-wrap items-center gap-4 mr-6">
+                        <ConfigProvider
+                            theme={{
+                                components: {
+                                    Select: { hoverBorderColor: color, activeBorderColor: color, activeOutlineColor: "none" },
+                                    Input: { hoverBorderColor: color, activeBorderColor: color },
+                                },
+                            }}
+                        >
+                            <div className="flex flex-wrap gap-4">
+                                <div className="flex items-center gap-2">
+                                    <span className="text-[14px] font-semibold">Pedido:</span>
+                                    <Select
+                                        size="small"
+                                        style={{ width: 120 }}
+                                        value={viewingLead?.crm_management?.order_status}
+                                        // onChange={(value) => statusMutation.mutate({ id: viewingEntity!.id, payload: { status: value } })}
+                                        options={[
+                                            { value: "ABERTO", label: "Aberto" },
+                                            { value: "FECHADO", label: "Fechado" },
+                                            { value: "CANCELADO", label: "Cancelado" },
+                                        ]}
+                                    />
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-[14px] font-semibold">Tramitação:</span>
+                                    <Select
+                                        placeholder="Selecione o status"
+                                        size="small"
+                                        value={viewingLead?.crm_management?.sales_status}
+                                        style={{ width: 220 }}
+                                        // onChange={(value) => updateMutation.mutate({ id: viewingEntity!.id, payload: { after_sales_status: value } })}
+                                        options={after_sales_status_enum.map((status) => ({ value: status, label: status }))}
+                                    />
 
+                                </div>
+                            </div>
+
+                        </ConfigProvider>
+                    </div>
                 </div>
             }
         >

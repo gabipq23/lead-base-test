@@ -78,19 +78,6 @@ type ViewingEntity = {
     crm_management?: ILeadCRMManagement;
 };
 
-const operatorOptions = [
-    { value: "tim", label: "TIM" },
-    { value: "claro", label: "Claro" },
-    { value: "vivo", label: "Vivo" },
-    { value: "algar", label: "Algar" },
-    { value: "brisanet", label: "Brisanet" },
-    { value: "nio", label: "Nio" },
-    { value: "vero", label: "Vero" },
-    { value: "desktop", label: "Desktop" },
-    { value: "vr", label: "VR" },
-    { value: "c6", label: "C6" },
-];
-
 const operatorInputOptions = [
     { value: "nao_realizado", label: "Não realizado" },
     { value: "realizado_com_sucesso", label: "Realizado com sucesso" },
@@ -136,17 +123,6 @@ const installationOptions = [
     { value: "local_sem_viabilidade", label: "Sem viabilidade no local" },
     { value: "pendente", label: "Pendente" },
     { value: "cancelado", label: "Cancelado" },
-];
-
-const orderStatusOptions = [
-    { value: "aberto", label: "Aberto" },
-    { value: "fechado", label: "Fechado" },
-    { value: "cancelado", label: "Cancelado" },
-];
-
-const salesStatusOptions = [
-    { value: "venda_realizada", label: "Venda realizada" },
-    { value: "venda_nao_realizada", label: "Venda não realizada" },
 ];
 
 const biometricsOptions = [
@@ -268,40 +244,50 @@ export function OrderControlTab({
                     <SectionTitle>Identificação</SectionTitle>
                     <div className="bg-neutral-100 rounded-sm p-3 w-full">
                         <Row gutter={[16, 16]}>
-                            <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>Nome da operadora</FieldLabel><Form.Item name={["crm_management", "operator_name"]} noStyle><Select showSearch size="small" style={{ width: 220 }} options={operatorOptions} allowClear /></Form.Item></span></Col>
+                            <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>Nome da operadora</FieldLabel><Form.Item name={["crm_management", "operator_name"]} noStyle><Input size="small" style={{ width: 220 }} /></Form.Item></span></Col>
+                            <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>ID Operadora</FieldLabel><Form.Item name={["crm_management", "id_operator"]} noStyle><Input size="small" style={{ width: 220 }} /></Form.Item></span></Col>
+                            <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>ID CRM</FieldLabel><Form.Item name={["crm_management", "id_crm"]} noStyle><Input size="small" style={{ width: 220 }} /></Form.Item></span></Col>
+
                             <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>Consultor</FieldLabel><Form.Item name={["crm_management", "consultant_name"]} noStyle><Input size="small" style={{ width: 220 }} /></Form.Item></span></Col>
                             <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>Equipe</FieldLabel><Form.Item name={["crm_management", "team"]} noStyle><Input size="small" style={{ width: 220 }} /></Form.Item></span></Col>
-                            <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>ID CRM</FieldLabel><Form.Item name={["crm_management", "id_crm"]} noStyle><Input size="small" style={{ width: 180 }} /></Form.Item></span></Col>
-                            <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>ID CORP</FieldLabel><Form.Item name={["crm_management", "id_corp"]} noStyle><Input size="small" style={{ width: 180 }} /></Form.Item></span></Col>
-                            <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>ID Operadora</FieldLabel><Form.Item name={["crm_management", "id_operator"]} noStyle><Input size="small" style={{ width: 180 }} /></Form.Item></span></Col>
+                            <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>ID CORP</FieldLabel><Form.Item name={["crm_management", "id_corp"]} noStyle><Input size="small" style={{ width: 220 }} /></Form.Item></span></Col>
+
+
                         </Row>
                     </div>
 
                     <SectionTitle>Operadora</SectionTitle>
                     <div className="bg-neutral-100 rounded-sm p-3 w-full">
                         <Row gutter={[16, 16]}>
-                            <Col span={6}><BooleanField name={["crm_management", "transhipment_operator"]} label="Transbordo na operadora" /></Col>
-                            <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>Nome da operadora de transbordo</FieldLabel><Form.Item name={["crm_management", "transhipment_operator_name"]} noStyle><Select showSearch allowClear size="small" style={{ width: 260 }} options={operatorOptions} /></Form.Item></span></Col>
-                            <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Input na operadora</FieldLabel><Form.Item name={["crm_management", "input_at_operator", "input"]} noStyle><Select size="small" style={{ width: 220 }} allowClear options={operatorInputOptions} /></Form.Item></span></Col>
-                            <Col span={12}><span className="flex flex-col gap-1"><FieldLabel>Observação do input</FieldLabel><Form.Item name={["crm_management", "input_at_operator", "note"]} noStyle><Input.TextArea rows={1} style={{ width: 320 }} /></Form.Item></span></Col>
+                            {/* <Col span={6}><BooleanField name={["crm_management", "transhipment_operator"]} label="Transbordo na operadora" /></Col>
+                            <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>Nome da operadora de transbordo</FieldLabel><Form.Item name={["crm_management", "transhipment_operator_name"]} noStyle><Input size="small" style={{ width: 260 }} /></Form.Item></span></Col> */}
+
+                            <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>Input na operadora</FieldLabel><Form.Item name={["crm_management", "input_at_operator", "input"]} noStyle><Select size="small" style={{ width: 220 }} allowClear options={operatorInputOptions} /></Form.Item></span></Col>
+                            <Col span={16}><span className="flex flex-col gap-1"><FieldLabel>Observação do input</FieldLabel><Form.Item name={["crm_management", "input_at_operator", "note"]} noStyle><Input.TextArea rows={2} style={{ width: 540 }} /></Form.Item></span></Col>
+
+
+
                             <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>Dívida com a operadora</FieldLabel><Form.Item name={["crm_management", "debt_with_operator", "debt_with_operator"]} noStyle><Select size="small" style={{ width: 220 }} allowClear options={debtOptions} /></Form.Item></span></Col>
                             <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>Faturas em aberto</FieldLabel><Form.Item name={["crm_management", "debt_with_operator", "number_of_open_invoices"]} noStyle><Input size="small" type="number" style={{ width: 180 }} /></Form.Item></span></Col>
                             <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>Valor total da dívida</FieldLabel><Form.Item name={["crm_management", "debt_with_operator", "debt_with_operator_amount"]} noStyle><Input size="small" style={{ width: 220 }} /></Form.Item></span></Col>
-                            <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Score SERASA</FieldLabel><Form.Item name={["crm_management", "score_serasa"]} noStyle><Select size="small" style={{ width: 180 }} allowClear options={scoreOptions} /></Form.Item></span></Col>
-                            <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Score Boa Vista</FieldLabel><Form.Item name={["crm_management", "score_boa_vista"]} noStyle><Select size="small" style={{ width: 180 }} allowClear options={scoreOptions} /></Form.Item></span></Col>
+
+                            <Col span={8}><BooleanField name={["crm_management", "operator_history", "history"]} label="Histórico na operadora" /></Col>
+                            <Col span={16}><span className="flex flex-col gap-1"><FieldLabel>Descrição do histórico</FieldLabel><Form.Item name={["crm_management", "operator_history", "description"]} noStyle><Input.TextArea rows={2} style={{ width: 540 }} /></Form.Item></span></Col>
+                            <Col span={8}><BooleanField name={["crm_management", "lows_history", "history"]} label="Histórico de baixas" /></Col>
+                            <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>Quantidade de dias</FieldLabel><Form.Item name={["crm_management", "lows_history", "amout_of_days"]} noStyle><Select size="small" style={{ width: 180 }} allowClear options={[{ value: "30", label: "30 dias" }, { value: "60", label: "60 dias" }, { value: "90", label: "90 dias" }, { value: "180", label: "180 dias" }, { value: "360", label: "360 dias" }]} /></Form.Item></span></Col>
+
                         </Row>
                     </div>
 
                     <SectionTitle>Análise de Crédito</SectionTitle>
                     <div className="bg-neutral-100 rounded-sm p-3 w-full">
                         <Row gutter={[16, 16]}>
-                            <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Análise de crédito</FieldLabel><Form.Item name={["crm_management", "credit_analysis"]} noStyle><Select size="small" style={{ width: 200 }} allowClear options={creditAnalysisOptions} /></Form.Item></span></Col>
-                            <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Antifraude</FieldLabel><Form.Item name={["crm_management", "antifraude"]} noStyle><Select size="small" style={{ width: 200 }} allowClear options={antifraudeOptions} /></Form.Item></span></Col>
-                            <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Disponibilidade PAP</FieldLabel><Form.Item name={["crm_management", "pap_availability"]} noStyle><Select size="small" style={{ width: 200 }} allowClear options={papAvailabilityOptions} /></Form.Item></span></Col>
-                            <Col span={8}><BooleanField name={["crm_management", "operator_history", "history"]} label="Histórico na operadora" /></Col>
-                            <Col span={12}><span className="flex flex-col gap-1"><FieldLabel>Descrição do histórico</FieldLabel><Form.Item name={["crm_management", "operator_history", "description"]} noStyle><Input.TextArea rows={1} style={{ width: 320 }} /></Form.Item></span></Col>
-                            <Col span={8}><BooleanField name={["crm_management", "lows_history", "history"]} label="Histórico de baixas" /></Col>
-                            <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>Quantidade de dias</FieldLabel><Form.Item name={["crm_management", "lows_history", "amout_of_days"]} noStyle><Select size="small" style={{ width: 180 }} allowClear options={[{ value: "30", label: "30 dias" }, { value: "60", label: "60 dias" }, { value: "90", label: "90 dias" }, { value: "180", label: "180 dias" }, { value: "360", label: "360 dias" }]} /></Form.Item></span></Col>
+                            <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>Score SERASA</FieldLabel><Form.Item name={["crm_management", "score_serasa"]} noStyle><Select size="small" style={{ width: 200 }} allowClear options={scoreOptions} /></Form.Item></span></Col>
+                            <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>Score Boa Vista</FieldLabel><Form.Item name={["crm_management", "score_boa_vista"]} noStyle><Select size="small" style={{ width: 200 }} allowClear options={scoreOptions} /></Form.Item></span></Col>
+
+                            <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>Análise de crédito</FieldLabel><Form.Item name={["crm_management", "credit_analysis"]} noStyle><Select size="small" style={{ width: 200 }} allowClear options={creditAnalysisOptions} /></Form.Item></span></Col>
+                            <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>Antifraude</FieldLabel><Form.Item name={["crm_management", "antifraude"]} noStyle><Select size="small" style={{ width: 200 }} allowClear options={antifraudeOptions} /></Form.Item></span></Col>
+                            <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>Disponibilidade PAP</FieldLabel><Form.Item name={["crm_management", "pap_availability"]} noStyle><Select size="small" style={{ width: 200 }} allowClear options={papAvailabilityOptions} /></Form.Item></span></Col>
                         </Row>
                     </div>
 
@@ -322,8 +308,6 @@ export function OrderControlTab({
                         <Row gutter={[16, 16]}>
                             <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Biometria</FieldLabel><Form.Item name={["crm_management", "biometrics"]} noStyle><Select size="small" style={{ width: 180 }} allowClear options={biometricsOptions} /></Form.Item></span></Col>
                             <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Contrato</FieldLabel><Form.Item name={["crm_management", "contract"]} noStyle><Select size="small" style={{ width: 180 }} allowClear options={contractOptions} /></Form.Item></span></Col>
-                            <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Status do pedido</FieldLabel><Form.Item name={["crm_management", "order_status"]} noStyle><Select size="small" style={{ width: 180 }} allowClear options={orderStatusOptions} /></Form.Item></span></Col>
-                            <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Status de vendas</FieldLabel><Form.Item name={["crm_management", "sales_status"]} noStyle><Select size="small" style={{ width: 220 }} allowClear options={salesStatusOptions} /></Form.Item></span></Col>
                             <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Instalação</FieldLabel><Form.Item name={["crm_management", "installation", "installation"]} noStyle><Select size="small" style={{ width: 240 }} allowClear options={installationOptions} /></Form.Item></span></Col>
                             <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Data agendada</FieldLabel><Form.Item name={["crm_management", "installation", "scheduled_date"]} noStyle><Input size="small" type="datetime-local" style={{ width: 220 }} /></Form.Item></span></Col>
                             <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Data reagendada</FieldLabel><Form.Item name={["crm_management", "installation", "rescheduled_date"]} noStyle><Input size="small" type="datetime-local" style={{ width: 220 }} /></Form.Item></span></Col>

@@ -14,14 +14,14 @@ export const menuOptionsCommon: MenuItem[] = [
         label: "Chat",
         to: "/app/chat",
       },
-      {
-        label: "Conectar conta",
-        to: "/app/evolution",
-      },
-      {
-        label: "Triggers",
-        to: "/app/triggers",
-      },
+      // {
+      //   label: "Conectar conta",
+      //   to: "/app/evolution",
+      // },
+      // {
+      //   label: "Triggers",
+      //   to: "/app/triggers",
+      // },
     ],
   },
 
@@ -40,21 +40,20 @@ export const menuOptionsCommon: MenuItem[] = [
         label: "PJ Checker",
         to: "/app/pj-checker",
       },
-        {
+      {
         label: "Zap Checker",
         to: "/app/zap-checker",
-      },  {
+      },
+      {
         label: "Base2B / Busca-Sócio",
         to: "/app/base2b-busca-socio",
       },
-       {
+      {
         label: "Base2B / Busca-Empresa",
         to: "/app/base2b-busca-empresa",
       },
     ],
-   
   },
-
 
   {
     label: "Dashboard",

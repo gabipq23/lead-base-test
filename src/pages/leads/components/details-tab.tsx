@@ -2,7 +2,7 @@ import { Col, Row, Tooltip } from "antd";
 import { OrderModalSection } from "@/pages/orders/common/components/order-modal-section";
 import ReadonlyField from "@/layout/common-components/ReadOnlyField";
 import type { ILead } from "@/types/ILead.type";
-import { formatCEP, formatCPF } from "@/utils/document.util";
+import { formatCEP, formatCPF, formatRG } from "@/utils/document.util";
 import { formatPhoneNumber } from "@/utils/number.utils";
 import { appSetting } from "@/constants/app-setting/config.const";
 
@@ -182,8 +182,19 @@ export function LeadDetailsTab({ lead }: { lead: ILead }) {
                             <ReadonlyField label="Nome (RFB)" value={lead.rfb_name} copyable />
                         </Col>
                         <Col span={8}>
+                            <ReadonlyField label="RG" value={formatRG(lead.rg?.rg)} copyable />
+                        </Col>
+                        <Col span={8}>
+                            <ReadonlyField label="Data de Expedição" value={lead.rg?.date_of_issue} copyable />
+                        </Col>
+                        <Col span={8}>
+                            <ReadonlyField label="Órgão Emissor" value={lead.rg?.issuing_authority} copyable />
+                        </Col>
+                        <Col span={8}>
                             <ReadonlyField label="CPF" value={formatCPF(lead.cpf)} copyable />
-                        </Col>    <Col span={8}>
+                        </Col>
+
+                        <Col span={8}>
                             <ReadonlyField label="Nome da mãe" value={lead.mother_name} copyable />
                         </Col>
                         <Col span={8}>
