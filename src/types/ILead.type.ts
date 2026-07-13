@@ -108,7 +108,7 @@ export interface ILeadCRMManagement {
     return: string; // positivo/negativo/neutro
     future_return: boolean; // sim/não
     future_return_date: string;
-  };
+  }[];
   consultant_name: string;
   id_corp: string;
   id_operator: string;

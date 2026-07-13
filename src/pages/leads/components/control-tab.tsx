@@ -5,16 +5,20 @@ import type { FormInstance } from "antd";
 import { useEffect } from "react";
 import { DatePicker } from "antd";
 import "dayjs/locale/pt-br";
+import dayjs, { Dayjs } from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+
+dayjs.extend(customParseFormat);
 type ContactHistoryForm = {
     attempt_number?: string;
-    date?: string;
+    date?: Dayjs | null;
     channel?: string;
     consultant_name?: string;
     status?: string;
     note?: string;
     return?: string;
     future_return?: boolean;
-    future_return_date?: string;
+    future_return_date?: Dayjs | null;
 };
 
 type ControlFormValues = {
@@ -58,9 +62,9 @@ type ControlFormValues = {
         contract?: string;
         installation?: {
             installation?: string;
-            scheduled_date?: string;
-            rescheduled_date?: string;
-            client_not_found_date?: string;
+            scheduled_date?: Dayjs | null;
+            rescheduled_date?: Dayjs | null;
+            client_not_found_date?: Dayjs | null;
             notes?: string;
         };
         order_status?: string;
@@ -78,7 +82,20 @@ type ViewingEntity = {
     id: number;
     crm_management?: ILeadCRMManagement;
 };
+function parseDate(value?: string | null) {
+    if (!value) return null;
 
+    return dayjs(
+        value,
+        [
+            "DD/MM/YYYY, HH:mm:ss",
+            "DD/MM/YYYY HH:mm",
+            "YYYY-MM-DDTHH:mm:ss",
+            "YYYY-MM-DD HH:mm:ss",
+        ],
+        true
+    );
+}
 const operatorInputOptions = [
     { value: "nao_realizado", label: "Não realizado" },
     { value: "realizado_com_sucesso", label: "Realizado com sucesso" },
@@ -200,7 +217,7 @@ export function OrderControlTab({
                 submission_of_documents: crm.submission_of_documents,
                 biometrics: crm.biometrics,
                 contract: crm.contract,
-                installation: crm.installation,
+
                 order_status: crm.order_status,
                 sales_status: crm.sales_status,
                 consultant_name: crm.consultant_name,
@@ -208,20 +225,88 @@ export function OrderControlTab({
                 id_operator: crm.id_operator,
                 id_crm: crm.id_crm,
                 team: crm.team,
-                contact_history: crm.contact_history ?? [],
+                installation: {
+                    ...crm.installation,
+                    scheduled_date: parseDate(
+                        crm.installation?.scheduled_date
+                    ),
+                    rescheduled_date: parseDate(
+                        crm.installation?.rescheduled_date
+                    ),
+                    client_not_found_date: parseDate(
+                        crm.installation?.client_not_found_date
+                    ),
+                },
+
+                contact_history:
+                    crm.contact_history?.map((item) => ({
+                        ...item,
+                        date: parseDate(item.date),
+                        future_return_date: parseDate(item.future_return_date),
+                    })) ?? [],
             },
         });
     }, [form, viewingEntity]);
 
     const handleFinish = (values: ControlFormValues) => {
+
+        const crm = values.crm_management;
+
         updateMutation.mutate({
             id: viewingEntity.id,
+
             payload: {
-                crm_management: values.crm_management,
+                crm_management: {
+                    ...crm,
+
+                    installation: {
+                        ...crm?.installation,
+
+                        scheduled_date:
+                            crm?.installation?.scheduled_date
+                                ? crm.installation.scheduled_date.format(
+                                    "DD/MM/YYYY, HH:mm:ss"
+                                )
+                                : null,
+
+                        rescheduled_date:
+                            crm?.installation?.rescheduled_date
+                                ? crm.installation.rescheduled_date.format(
+                                    "DD/MM/YYYY, HH:mm:ss"
+                                )
+                                : null,
+
+                        client_not_found_date:
+                            crm?.installation?.client_not_found_date
+                                ? crm.installation.client_not_found_date.format(
+                                    "DD/MM/YYYY, HH:mm:ss"
+                                )
+                                : null,
+                    },
+
+
+                    contact_history:
+                        crm?.contact_history?.map((item) => ({
+                            ...item,
+
+                            date:
+                                item.date
+                                    ? item.date.format(
+                                        "DD/MM/YYYY, HH:mm:ss"
+                                    )
+                                    : null,
+
+                            future_return_date:
+                                item.future_return_date
+                                    ? item.future_return_date.format(
+                                        "DD/MM/YYYY, HH:mm:ss"
+                                    )
+                                    : null,
+                        })) ?? [],
+                },
             },
         });
     };
-
     const color = appSetting.primaryColor;
 
     return (
@@ -384,51 +469,62 @@ export function OrderControlTab({
                     <div className="bg-neutral-100 rounded-sm p-3 w-full">
                         <Row gutter={[16, 16]}>
                             <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Instalação</FieldLabel><Form.Item name={["crm_management", "installation", "installation"]} noStyle><Select size="small" style={{ width: 200 }} allowClear options={installationOptions} /></Form.Item></span></Col>
-                            <Col span={6}>  <Form.Item
-                                className="flex flex-col gap-2"
-                                name={["crm_management", "installation", "scheduled_date"]}
-                                noStyle
-                            >
-                                <FieldLabel>Data de Instalação</FieldLabel>
-                                <DatePicker
-                                    showTime
-                                    format="DD/MM/YYYY HH:mm"
-                                    size="small"
-                                    placeholder="Escolha uma data"
-                                    style={{ width: 200, height: 25, marginTop: 4 }}
-                                    showNow={false}
-                                />
-                            </Form.Item></Col>
-                            <Col span={6}>  <Form.Item
-                                className="flex flex-col gap-2"
-                                name={["crm_management", "installation", "rescheduled_date"]}
-                                noStyle
-                            >
-                                <FieldLabel>Data de Reagendamento</FieldLabel>
-                                <DatePicker
-                                    showTime
-                                    format="DD/MM/YYYY HH:mm"
-                                    size="small"
-                                    placeholder="Escolha uma data"
-                                    style={{ width: 200, height: 25, marginTop: 4 }}
-                                    showNow={false}
-                                />
-                            </Form.Item></Col>
-                            <Col span={6}>  <Form.Item
-                                className="flex flex-col gap-2"
-                                name={["crm_management", "installation", "client_not_found_date"]}
-                                noStyle
-                            >
-                                <FieldLabel>Cliente não encontrado</FieldLabel>
-                                <DatePicker
-                                    showTime
-                                    format="DD/MM/YYYY HH:mm"
-                                    size="small"
-                                    placeholder="Escolha uma data"
-                                    style={{ width: 200, height: 25, marginTop: 4 }}
-                                    showNow={false}
-                                />
-                            </Form.Item></Col>
+                            <Col span={6}>
+                                <span className="flex flex-col gap-1">
+                                    <FieldLabel>Data de Instalação</FieldLabel>
+                                    <Form.Item
+                                        name={["crm_management", "installation", "scheduled_date"]}
+                                        noStyle
+                                    >
+                                        <DatePicker
+                                            showTime
+                                            format="DD/MM/YYYY HH:mm"
+                                            size="small"
+                                            placeholder="Escolha uma data"
+                                            style={{ width: 200, height: 25 }}
+                                            showNow={false}
+                                        />
+                                    </Form.Item>
+                                </span>
+                            </Col>
+                            <Col span={6}>
+                                <span className="flex flex-col gap-1">
+                                    <FieldLabel>Data de Reagendamento</FieldLabel>
+                                    <Form.Item
+                                        name={["crm_management", "installation", "rescheduled_date"]}
+                                        noStyle
+                                    >
+
+                                        <DatePicker
+                                            showTime
+                                            format="DD/MM/YYYY HH:mm"
+                                            size="small"
+                                            placeholder="Escolha uma data"
+                                            style={{ width: 200, height: 25 }}
+                                            showNow={false}
+                                        />
+                                    </Form.Item>
+                                </span>
+                            </Col>
+                            <Col span={6}>
+                                <span className="flex flex-col gap-1">
+                                    <FieldLabel>Cliente não encontrado</FieldLabel>
+                                    <Form.Item
+                                        name={["crm_management", "installation", "client_not_found_date"]}
+                                        noStyle
+                                    >
+
+                                        <DatePicker
+                                            showTime
+                                            format="DD/MM/YYYY HH:mm"
+                                            size="small"
+                                            placeholder="Escolha uma data"
+                                            style={{ width: 200, height: 25 }}
+                                            showNow={false}
+                                        />
+                                    </Form.Item>
+                                </span>
+                            </Col>
                             <Col span={12}><span className="flex flex-col gap-1"><FieldLabel>Observações da instalação</FieldLabel><Form.Item name={["crm_management", "installation", "notes"]} noStyle><Input.TextArea rows={2} style={{ width: 430 }} /></Form.Item></span></Col>
                         </Row>
                     </div>
@@ -448,7 +544,7 @@ export function OrderControlTab({
                                                 attempts.length === 0
                                                     ? 1
                                                     : Math.max(
-                                                        ...attempts.map((a) => Number(a?.attempt_number) || 0)
+                                                        ...attempts.map((a: any) => Number(a?.attempt_number) || 0)
                                                     ) + 1;
 
                                             add({
@@ -473,21 +569,25 @@ export function OrderControlTab({
                                                         </Form.Item>
                                                     </span>
                                                 </Col>
-                                                <Col span={6}>  <Form.Item
-                                                    className="flex flex-col gap-2"
-                                                    name={[field.name, "date"]}
-                                                    noStyle
-                                                >
-                                                    <FieldLabel>Data</FieldLabel>
-                                                    <DatePicker
-                                                        showTime
-                                                        format="DD/MM/YYYY HH:mm"
-                                                        size="small"
-                                                        placeholder="Escolha uma data"
-                                                        style={{ width: 200, height: 25, marginTop: 4 }}
-                                                        showNow={false}
-                                                    />
-                                                </Form.Item></Col>
+                                                <Col span={6}>
+                                                    <span className="flex flex-col gap-1">
+                                                        <FieldLabel>Data</FieldLabel>
+                                                        <Form.Item
+                                                            name={[field.name, "date"]}
+                                                            noStyle
+                                                        >
+
+                                                            <DatePicker
+                                                                showTime
+                                                                format="DD/MM/YYYY HH:mm"
+                                                                size="small"
+                                                                placeholder="Escolha uma data"
+                                                                style={{ width: 200, height: 25 }}
+                                                                showNow={false}
+                                                            />
+                                                        </Form.Item>
+                                                    </span>
+                                                </Col>
 
 
                                                 <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Canal de atendimento</FieldLabel><Form.Item name={[field.name, "channel"]} noStyle><Select size="small" style={{ width: 200 }} options={contactChannelOptions} allowClear /></Form.Item></span></Col>
@@ -496,21 +596,24 @@ export function OrderControlTab({
                                                 <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Resposta</FieldLabel><Form.Item name={[field.name, "return"]} noStyle><Select size="small" style={{ width: 200 }} allowClear options={[{ value: "positivo", label: "Positiva" }, { value: "negativo", label: "Negativa" }, { value: "neutro", label: "Neutra" }]} /></Form.Item></span></Col>
 
                                                 <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Retorno futuro</FieldLabel><Form.Item name={[field.name, "future_return"]} valuePropName="checked" noStyle><Checkbox>Sim</Checkbox></Form.Item></span></Col>
-                                                <Col span={6}>  <Form.Item
-                                                    className="flex flex-col gap-2"
-                                                    name={[field.name, "future_return_date"]}
-                                                    noStyle
-                                                >
-                                                    <FieldLabel>Data do retorno futuro</FieldLabel>
-                                                    <DatePicker
-                                                        showTime
-                                                        format="DD/MM/YYYY HH:mm"
-                                                        size="small"
-                                                        placeholder="Escolha uma data"
-                                                        style={{ width: 200, height: 25, marginTop: 4 }}
-                                                        showNow={false}
-                                                    />
-                                                </Form.Item></Col>
+                                                <Col span={6}>
+                                                    <span className="flex flex-col gap-1">
+                                                        <FieldLabel>Data do retorno futuro</FieldLabel>
+                                                        <Form.Item
+                                                            name={[field.name, "future_return_date"]}
+                                                            noStyle
+                                                        >
+
+                                                            <DatePicker
+                                                                showTime
+                                                                format="DD/MM/YYYY HH:mm"
+                                                                size="small"
+                                                                placeholder="Escolha uma data"
+                                                                style={{ width: 200, height: 25 }}
+                                                                showNow={false}
+                                                            />
+                                                        </Form.Item>
+                                                    </span></Col>
                                                 <Col span={12}><span className="flex flex-col gap-1"><FieldLabel>Observação</FieldLabel><Form.Item name={[field.name, "note"]} noStyle><Input.TextArea rows={2} style={{ width: 430 }} /></Form.Item></span></Col>
 
                                                 <Col span={24}><Button danger type="link" onClick={() => remove(field.name)}>Remover tentativa</Button></Col>
