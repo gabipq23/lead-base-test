@@ -1,9 +1,10 @@
 import { appSetting } from "@/constants/app-setting/config.const";
 import type { ILeadCRMManagement } from "@/types/ILead.type";
-import { Button, Checkbox, Col, ConfigProvider, Divider, Form, Input, Row, Select, Typography } from "antd";
+import { AutoComplete, Button, Checkbox, Col, ConfigProvider, Divider, Form, Input, Row, Select, Typography } from "antd";
 import type { FormInstance } from "antd";
 import { useEffect } from "react";
-
+import { DatePicker } from "antd";
+import "dayjs/locale/pt-br";
 type ContactHistoryForm = {
     attempt_number?: string;
     date?: string;
@@ -90,10 +91,7 @@ const debtOptions = [
     { value: "sim", label: "Sim" },
 ];
 
-const scoreOptions = [
-    { value: "sem_registro", label: "Sem registro" },
-    { value: "score", label: "Score" },
-];
+
 
 const creditAnalysisOptions = [
     { value: "sem_analise", label: "Sem análise" },
@@ -138,15 +136,11 @@ const contractOptions = [
 ];
 
 const contactChannelOptions = [
-    { value: "telefone", label: "Telefone" },
+    { value: "ligação", label: "Ligação" },
     { value: "whatsapp", label: "WhatsApp" },
     { value: "telegram", label: "Telegram" },
     { value: "email", label: "Email" },
     { value: "sms", label: "SMS" },
-    { value: "rcs", label: "RCS" },
-    { value: "direct", label: "Direct" },
-    { value: "messenger", label: "Messenger" },
-    { value: "linkedin", label: "LinkedIn" },
     { value: "outro", label: "Outro" },
 ];
 
@@ -232,7 +226,7 @@ export function OrderControlTab({
 
     return (
         <Form form={form} onFinish={handleFinish} layout="vertical">
-            <div className="max-h-90 overflow-y-auto scrollbar-thin flex flex-col gap-4">
+            <div className="max-h-90 overflow-y-auto scrollbar-thin flex flex-col gap-1">
                 <ConfigProvider
                     theme={{
                         components: {
@@ -244,13 +238,14 @@ export function OrderControlTab({
                     <SectionTitle>Identificação</SectionTitle>
                     <div className="bg-neutral-100 rounded-sm p-3 w-full">
                         <Row gutter={[16, 16]}>
-                            <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>Nome da operadora</FieldLabel><Form.Item name={["crm_management", "operator_name"]} noStyle><Input size="small" style={{ width: 220 }} /></Form.Item></span></Col>
-                            <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>ID Operadora</FieldLabel><Form.Item name={["crm_management", "id_operator"]} noStyle><Input size="small" style={{ width: 220 }} /></Form.Item></span></Col>
                             <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>ID CRM</FieldLabel><Form.Item name={["crm_management", "id_crm"]} noStyle><Input size="small" style={{ width: 220 }} /></Form.Item></span></Col>
+                            <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>ID Operadora</FieldLabel><Form.Item name={["crm_management", "id_operator"]} noStyle><Input size="small" style={{ width: 220 }} /></Form.Item></span></Col>
+
+                            <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>Nome da operadora</FieldLabel><Form.Item name={["crm_management", "operator_name"]} noStyle><Input size="small" style={{ width: 220 }} /></Form.Item></span></Col>
+                            <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>ID CORP</FieldLabel><Form.Item name={["crm_management", "id_corp"]} noStyle><Input size="small" style={{ width: 220 }} /></Form.Item></span></Col>
 
                             <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>Consultor</FieldLabel><Form.Item name={["crm_management", "consultant_name"]} noStyle><Input size="small" style={{ width: 220 }} /></Form.Item></span></Col>
                             <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>Equipe</FieldLabel><Form.Item name={["crm_management", "team"]} noStyle><Input size="small" style={{ width: 220 }} /></Form.Item></span></Col>
-                            <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>ID CORP</FieldLabel><Form.Item name={["crm_management", "id_corp"]} noStyle><Input size="small" style={{ width: 220 }} /></Form.Item></span></Col>
 
 
                         </Row>
@@ -282,37 +277,159 @@ export function OrderControlTab({
                     <SectionTitle>Análise de Crédito</SectionTitle>
                     <div className="bg-neutral-100 rounded-sm p-3 w-full">
                         <Row gutter={[16, 16]}>
-                            <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>Score SERASA</FieldLabel><Form.Item name={["crm_management", "score_serasa"]} noStyle><Select size="small" style={{ width: 200 }} allowClear options={scoreOptions} /></Form.Item></span></Col>
-                            <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>Score Boa Vista</FieldLabel><Form.Item name={["crm_management", "score_boa_vista"]} noStyle><Select size="small" style={{ width: 200 }} allowClear options={scoreOptions} /></Form.Item></span></Col>
+                            <Col span={8}>
+                                <span className="flex flex-col gap-1">
+                                    <FieldLabel>Score SERASA</FieldLabel>
 
+                                    <Form.Item
+                                        name={["crm_management", "score_serasa"]}
+                                        noStyle
+                                        rules={[
+                                            {
+                                                validator: (_, value) => {
+                                                    if (!value) return Promise.resolve();
+
+                                                    if (
+                                                        value === "sem-registro" ||
+                                                        /^\d+$/.test(value)
+                                                    ) {
+                                                        return Promise.resolve();
+                                                    }
+
+                                                    return Promise.reject(
+                                                        new Error("Informe 'sem-registro' ou uma pontuação numérica.")
+                                                    );
+                                                },
+                                            },
+                                        ]}
+                                    >
+                                        <AutoComplete
+                                            style={{ width: 200 }}
+                                            size="small"
+                                            options={[
+                                                { value: "sem-registro", label: "Sem registro" },
+                                            ]}
+                                            placeholder="Ex.: 850 ou sem registro"
+                                            filterOption
+                                        />
+                                    </Form.Item>
+                                </span>
+                            </Col>
+
+                            <Col span={8}>
+                                <span className="flex flex-col gap-1">
+                                    <FieldLabel>Score Boa Vista</FieldLabel>
+
+                                    <Form.Item
+                                        name={["crm_management", "score_boa_vista"]}
+                                        noStyle
+                                        rules={[
+                                            {
+                                                validator: (_, value) => {
+                                                    if (!value) return Promise.resolve();
+
+                                                    if (
+                                                        value === "sem-registro" ||
+                                                        /^\d+$/.test(value)
+                                                    ) {
+                                                        return Promise.resolve();
+                                                    }
+
+                                                    return Promise.reject(
+                                                        new Error("Informe 'sem-registro' ou uma pontuação numérica.")
+                                                    );
+                                                },
+                                            },
+                                        ]}
+                                    >
+                                        <AutoComplete
+                                            style={{ width: 200 }}
+                                            size="small"
+                                            options={[
+                                                { value: "sem-registro", label: "Sem registro" },
+                                            ]}
+                                            placeholder="Ex.: 720 ou sem registro"
+                                            filterOption
+                                        />
+                                    </Form.Item>
+                                </span>
+                            </Col>
                             <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>Análise de crédito</FieldLabel><Form.Item name={["crm_management", "credit_analysis"]} noStyle><Select size="small" style={{ width: 200 }} allowClear options={creditAnalysisOptions} /></Form.Item></span></Col>
                             <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>Antifraude</FieldLabel><Form.Item name={["crm_management", "antifraude"]} noStyle><Select size="small" style={{ width: 200 }} allowClear options={antifraudeOptions} /></Form.Item></span></Col>
                             <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>Disponibilidade PAP</FieldLabel><Form.Item name={["crm_management", "pap_availability"]} noStyle><Select size="small" style={{ width: 200 }} allowClear options={papAvailabilityOptions} /></Form.Item></span></Col>
                         </Row>
                     </div>
 
-                    <SectionTitle>Recadastro e Documentos</SectionTitle>
+                    <SectionTitle>Documentos</SectionTitle>
                     <div className="bg-neutral-100 rounded-sm p-3 w-full">
                         <Row gutter={[16, 16]}>
-                            <Col span={6}><BooleanField name={["crm_management", "reregistration"]} label="Possui recadastro" /></Col>
+                            {/* <Col span={6}><BooleanField name={["crm_management", "reregistration"]} label="Possui recadastro" /></Col>
                             <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Documento</FieldLabel><Form.Item name={["crm_management", "re_registration_info", "document"]} valuePropName="checked" noStyle><Checkbox>CPF/CNPJ</Checkbox></Form.Item></span></Col>
                             <Col span={12}><span className="flex flex-col gap-1"><FieldLabel>Dados do recadastro</FieldLabel><Typography.Text type="secondary" className="text-xs">Campo reservado para a estrutura livre do recadastro. Será tratado em um layout próprio.</Typography.Text></span></Col>
-                            <Col span={12}><span className="flex flex-col gap-1"><FieldLabel>Observação do recadastro</FieldLabel><Form.Item name={["crm_management", "re_registration_info", "note"]} noStyle><Input.TextArea rows={1} style={{ width: 360 }} /></Form.Item></span></Col>
+                            <Col span={12}><span className="flex flex-col gap-1"><FieldLabel>Observação do recadastro</FieldLabel><Form.Item name={["crm_management", "re_registration_info", "note"]} noStyle><Input.TextArea rows={1} style={{ width: 360 }} /></Form.Item></span></Col> */}
                             <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Envio de documentos</FieldLabel><Form.Item name={["crm_management", "submission_of_documents", "is_submitted"]} valuePropName="checked" noStyle><Checkbox>Documentos enviados</Checkbox></Form.Item></span></Col>
                             <Col span={18}><span className="flex flex-col gap-1"><FieldLabel>Quais documentos</FieldLabel><Form.Item name={["crm_management", "submission_of_documents", "documents"]} noStyle><Checkbox.Group options={documentOptions} /></Form.Item></span></Col>
                         </Row>
                     </div>
 
-                    <SectionTitle>Contrato e Instalação</SectionTitle>
+                    <SectionTitle>Contrato</SectionTitle>
                     <div className="bg-neutral-100 rounded-sm p-3 w-full">
                         <Row gutter={[16, 16]}>
                             <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Biometria</FieldLabel><Form.Item name={["crm_management", "biometrics"]} noStyle><Select size="small" style={{ width: 180 }} allowClear options={biometricsOptions} /></Form.Item></span></Col>
                             <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Contrato</FieldLabel><Form.Item name={["crm_management", "contract"]} noStyle><Select size="small" style={{ width: 180 }} allowClear options={contractOptions} /></Form.Item></span></Col>
-                            <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Instalação</FieldLabel><Form.Item name={["crm_management", "installation", "installation"]} noStyle><Select size="small" style={{ width: 240 }} allowClear options={installationOptions} /></Form.Item></span></Col>
-                            <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Data agendada</FieldLabel><Form.Item name={["crm_management", "installation", "scheduled_date"]} noStyle><Input size="small" type="datetime-local" style={{ width: 220 }} /></Form.Item></span></Col>
-                            <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Data reagendada</FieldLabel><Form.Item name={["crm_management", "installation", "rescheduled_date"]} noStyle><Input size="small" type="datetime-local" style={{ width: 220 }} /></Form.Item></span></Col>
-                            <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Cliente não encontrado</FieldLabel><Form.Item name={["crm_management", "installation", "client_not_found_date"]} noStyle><Input size="small" type="datetime-local" style={{ width: 220 }} /></Form.Item></span></Col>
-                            <Col span={12}><span className="flex flex-col gap-1"><FieldLabel>Observações da instalação</FieldLabel><Form.Item name={["crm_management", "installation", "notes"]} noStyle><Input.TextArea rows={1} style={{ width: 360 }} /></Form.Item></span></Col>
+                        </Row>
+                    </div>
+
+                    <SectionTitle>Instalação</SectionTitle>
+                    <div className="bg-neutral-100 rounded-sm p-3 w-full">
+                        <Row gutter={[16, 16]}>
+                            <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Instalação</FieldLabel><Form.Item name={["crm_management", "installation", "installation"]} noStyle><Select size="small" style={{ width: 200 }} allowClear options={installationOptions} /></Form.Item></span></Col>
+                            <Col span={6}>  <Form.Item
+                                className="flex flex-col gap-2"
+                                name={["crm_management", "installation", "scheduled_date"]}
+                                noStyle
+                            >
+                                <FieldLabel>Data de Instalação</FieldLabel>
+                                <DatePicker
+                                    showTime
+                                    format="DD/MM/YYYY HH:mm"
+                                    size="small"
+                                    placeholder="Escolha uma data"
+                                    style={{ width: 200, height: 25, marginTop: 4 }}
+                                    showNow={false}
+                                />
+                            </Form.Item></Col>
+                            <Col span={6}>  <Form.Item
+                                className="flex flex-col gap-2"
+                                name={["crm_management", "installation", "rescheduled_date"]}
+                                noStyle
+                            >
+                                <FieldLabel>Data de Reagendamento</FieldLabel>
+                                <DatePicker
+                                    showTime
+                                    format="DD/MM/YYYY HH:mm"
+                                    size="small"
+                                    placeholder="Escolha uma data"
+                                    style={{ width: 200, height: 25, marginTop: 4 }}
+                                    showNow={false}
+                                />
+                            </Form.Item></Col>
+                            <Col span={6}>  <Form.Item
+                                className="flex flex-col gap-2"
+                                name={["crm_management", "installation", "client_not_found_date"]}
+                                noStyle
+                            >
+                                <FieldLabel>Cliente não encontrado</FieldLabel>
+                                <DatePicker
+                                    showTime
+                                    format="DD/MM/YYYY HH:mm"
+                                    size="small"
+                                    placeholder="Escolha uma data"
+                                    style={{ width: 200, height: 25, marginTop: 4 }}
+                                    showNow={false}
+                                />
+                            </Form.Item></Col>
+                            <Col span={12}><span className="flex flex-col gap-1"><FieldLabel>Observações da instalação</FieldLabel><Form.Item name={["crm_management", "installation", "notes"]} noStyle><Input.TextArea rows={2} style={{ width: 430 }} /></Form.Item></span></Col>
                         </Row>
                     </div>
 
@@ -321,20 +438,83 @@ export function OrderControlTab({
                         <Form.List name={["crm_management", "contact_history"]}>
                             {(fields, { add, remove }) => (
                                 <div className="flex flex-col gap-3">
-                                    <div><Button type="dashed" onClick={() => add({})}>Adicionar tentativa</Button></div>
-                                    {fields.map((field, index) => (
+                                    <div><Button
+                                        type="dashed"
+                                        onClick={() => {
+                                            const attempts =
+                                                form.getFieldValue(["crm_management", "contact_history"]) || [];
+
+                                            const nextAttempt =
+                                                attempts.length === 0
+                                                    ? 1
+                                                    : Math.max(
+                                                        ...attempts.map((a) => Number(a?.attempt_number) || 0)
+                                                    ) + 1;
+
+                                            add({
+                                                attempt_number: String(nextAttempt),
+                                            });
+                                        }}
+                                    >
+                                        Adicionar tentativa
+                                    </Button></div>
+                                    {fields.map((field) => (
                                         <div key={field.key} className="rounded border border-neutral-200 bg-white p-3">
                                             <Row gutter={[16, 16]}>
-                                                <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Tentativa {index + 1}</FieldLabel><Form.Item name={[field.name, "attempt_number"]} noStyle><Input size="small" style={{ width: 180 }} /></Form.Item></span></Col>
-                                                <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Data</FieldLabel><Form.Item name={[field.name, "date"]} noStyle><Input size="small" type="datetime-local" style={{ width: 220 }} /></Form.Item></span></Col>
-                                                <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Canal de atendimento</FieldLabel><Form.Item name={[field.name, "channel"]} noStyle><Select size="small" style={{ width: 220 }} options={contactChannelOptions} allowClear /></Form.Item></span></Col>
-                                                <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Nome do consultor</FieldLabel><Form.Item name={[field.name, "consultant_name"]} noStyle><Input size="small" style={{ width: 220 }} /></Form.Item></span></Col>
-                                                <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Status</FieldLabel><Form.Item name={[field.name, "status"]} noStyle><Select size="small" style={{ width: 180 }} allowClear options={[{ value: "atendido", label: "Atendido" }, { value: "nao_atendido", label: "Não atendido" }, { value: "sem_resposta", label: "Sem resposta" }]} /></Form.Item></span></Col>
-                                                <Col span={8}><span className="flex flex-col gap-1"><FieldLabel>Observação</FieldLabel><Form.Item name={[field.name, "note"]} noStyle><Input.TextArea rows={1} style={{ width: 260 }} /></Form.Item></span></Col>
-                                                <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Retorno</FieldLabel><Form.Item name={[field.name, "return"]} noStyle><Select size="small" style={{ width: 180 }} allowClear options={[{ value: "positivo", label: "Positivo" }, { value: "negativo", label: "Negativo" }, { value: "neutro", label: "Neutro" }]} /></Form.Item></span></Col>
+                                                <Col span={6}>
+                                                    <span className="flex flex-col gap-1">
+                                                        <FieldLabel>Tentativa</FieldLabel>
+                                                        <Form.Item name={[field.name, "attempt_number"]} noStyle>
+                                                            <Input
+                                                                size="small"
+                                                                style={{ width: 180 }}
+                                                                disabled
+                                                            />
+                                                        </Form.Item>
+                                                    </span>
+                                                </Col>
+                                                <Col span={6}>  <Form.Item
+                                                    className="flex flex-col gap-2"
+                                                    name={[field.name, "date"]}
+                                                    noStyle
+                                                >
+                                                    <FieldLabel>Data</FieldLabel>
+                                                    <DatePicker
+                                                        showTime
+                                                        format="DD/MM/YYYY HH:mm"
+                                                        size="small"
+                                                        placeholder="Escolha uma data"
+                                                        style={{ width: 200, height: 25, marginTop: 4 }}
+                                                        showNow={false}
+                                                    />
+                                                </Form.Item></Col>
+
+
+                                                <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Canal de atendimento</FieldLabel><Form.Item name={[field.name, "channel"]} noStyle><Select size="small" style={{ width: 200 }} options={contactChannelOptions} allowClear /></Form.Item></span></Col>
+                                                <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Nome do consultor</FieldLabel><Form.Item name={[field.name, "consultant_name"]} noStyle><Input size="small" style={{ width: 200 }} /></Form.Item></span></Col>
+                                                <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Status</FieldLabel><Form.Item name={[field.name, "status"]} noStyle><Select size="small" style={{ width: 200 }} allowClear options={[{ value: "atendido", label: "Atendido" }, { value: "nao_atendido", label: "Não atendido" }, { value: "sem_resposta", label: "Sem resposta" }]} /></Form.Item></span></Col>
+                                                <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Resposta</FieldLabel><Form.Item name={[field.name, "return"]} noStyle><Select size="small" style={{ width: 200 }} allowClear options={[{ value: "positivo", label: "Positiva" }, { value: "negativo", label: "Negativa" }, { value: "neutro", label: "Neutra" }]} /></Form.Item></span></Col>
+
                                                 <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Retorno futuro</FieldLabel><Form.Item name={[field.name, "future_return"]} valuePropName="checked" noStyle><Checkbox>Sim</Checkbox></Form.Item></span></Col>
-                                                <Col span={6}><span className="flex flex-col gap-1"><FieldLabel>Data do retorno futuro</FieldLabel><Form.Item name={[field.name, "future_return_date"]} noStyle><Input size="small" type="datetime-local" style={{ width: 220 }} /></Form.Item></span></Col>
+                                                <Col span={6}>  <Form.Item
+                                                    className="flex flex-col gap-2"
+                                                    name={[field.name, "future_return_date"]}
+                                                    noStyle
+                                                >
+                                                    <FieldLabel>Data do retorno futuro</FieldLabel>
+                                                    <DatePicker
+                                                        showTime
+                                                        format="DD/MM/YYYY HH:mm"
+                                                        size="small"
+                                                        placeholder="Escolha uma data"
+                                                        style={{ width: 200, height: 25, marginTop: 4 }}
+                                                        showNow={false}
+                                                    />
+                                                </Form.Item></Col>
+                                                <Col span={12}><span className="flex flex-col gap-1"><FieldLabel>Observação</FieldLabel><Form.Item name={[field.name, "note"]} noStyle><Input.TextArea rows={2} style={{ width: 430 }} /></Form.Item></span></Col>
+
                                                 <Col span={24}><Button danger type="link" onClick={() => remove(field.name)}>Remover tentativa</Button></Col>
+
                                             </Row>
                                         </div>
                                     ))}
@@ -343,7 +523,7 @@ export function OrderControlTab({
                         </Form.List>
                     </div>
                 </ConfigProvider>
-            </div>
-        </Form>
+            </div >
+        </Form >
     );
 }
